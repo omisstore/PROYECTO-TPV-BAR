@@ -2,7 +2,6 @@ package gui;
 
 import java.awt.BorderLayout;
 import java.awt.FlowLayout;
-import java.awt.HeadlessException;
 
 import javax.swing.JButton;
 import javax.swing.JDialog;
@@ -11,11 +10,8 @@ import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
 
 import estructura.Fichero;
-import estructura.exceptions.FicheroNoExisteException;
 import estructura.exceptions.ListaVaciaException;
 import estructura.exceptions.ProductoNoEncontradoExcepcion;
-import estructura.exceptions.StockNoValidoException;
-import estructura.exceptions.VueltaNoValidaException;
 
 import javax.swing.JTextPane;
 import java.awt.CardLayout;
@@ -68,10 +64,9 @@ public class CobrarCuenta extends JDialog {
 					public void actionPerformed(ActionEvent e) {
 						try {
 							double vuelta = Fichero.tpv.cobrarGui(Double.valueOf(JOptionPane.showInputDialog(null, "Dinero del cliente?")));
-							JOptionPane.showMessageDialog(null,"Cobro finalizado.\n Vuelta: "+vuelta, "Cobro", JOptionPane.INFORMATION_MESSAGE);
+							JOptionPane.showMessageDialog(null,"Cobro finalizado.\n Vuelta: "+vuelta+"€", "Cobro", JOptionPane.INFORMATION_MESSAGE);
 							setVisible(false);
-						} catch (ProductoNoEncontradoExcepcion | StockNoValidoException | FicheroNoExisteException
-								 | NumberFormatException | HeadlessException | VueltaNoValidaException e1) {
+						} catch (Exception e1) {
 							JOptionPane.showMessageDialog(null, e1.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
 						}
 					}

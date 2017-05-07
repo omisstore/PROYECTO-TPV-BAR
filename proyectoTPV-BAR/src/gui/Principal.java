@@ -350,10 +350,13 @@ public class Principal extends JFrame {
 						tableAnadirPescadoACuenta.clearSelection();
 						Fichero.tpv.setModificado(true);
 					} else {
-						JOptionPane.showMessageDialog(null, "Selecciona algun produdcto, para poder modificarlo",
+						JOptionPane.showMessageDialog(null, "Selecciona algun produdcto, para poder añadirlo a la cuenta.",
 								"Error", JOptionPane.ERROR_MESSAGE);
 					}
 					refrescarTotalCuenta();
+					tableAnadirCarneACuenta.clearSelection();
+					tableAnadirPescadoACuenta.clearSelection();
+					tableAnadirBebidaACuenta.clearSelection();
 				} catch (Exception e2) {
 					JOptionPane.showMessageDialog(null, e2.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
 				}
