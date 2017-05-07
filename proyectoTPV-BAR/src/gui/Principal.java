@@ -39,6 +39,9 @@ import javax.swing.border.LineBorder;
 import java.awt.Color;
 import javax.swing.SwingConstants;
 import javax.swing.JScrollPane;
+import javax.swing.KeyStroke;
+import java.awt.event.KeyEvent;
+import java.awt.event.InputEvent;
 
 /**
  * GUI Principal del TPV-BAR
@@ -101,6 +104,7 @@ public class Principal extends JFrame {
 		menuBar.add(mnArchivo);
 
 		JMenuItem mntmNuevo = new JMenuItem("Nuevo");//Crear un nuevo Tpv
+		mntmNuevo.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_N, InputEvent.CTRL_MASK));
 		mntmNuevo.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				if (Fichero.tpv.isModificado()) {//Comprobar si el tpv se ha modificado
@@ -132,6 +136,7 @@ public class Principal extends JFrame {
 		mnArchivo.add(mntmNuevo);
 
 		JMenuItem mntmAbrir = new JMenuItem("Abrir");//Abrir un tpv existente en un fichero
+		mntmAbrir.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_A, InputEvent.CTRL_MASK));
 		mntmAbrir.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				if (Fichero.tpv.isModificado()) {
@@ -166,6 +171,7 @@ public class Principal extends JFrame {
 		mnArchivo.add(mntmAbrir);
 
 		JMenuItem mntmGuardar = new JMenuItem("Guardar");//Guardar el tpv actual.
+		mntmGuardar.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_G, InputEvent.CTRL_MASK));
 		mntmGuardar.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				if (getTitle() == "Sin titulo") {//Comprueba que si no hay abierto ningun tpv, se guarde el actual
@@ -186,6 +192,7 @@ public class Principal extends JFrame {
 		mnArchivo.add(mntmGuardar);
 
 		JMenuItem mntmGuardarComo = new JMenuItem("Guardar como...");//Se guarda el tpv en un fichero fichero indicado
+		mntmGuardarComo.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_G, InputEvent.CTRL_MASK | InputEvent.SHIFT_MASK));
 		mntmGuardarComo.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				guardarComoFichero();
@@ -198,6 +205,7 @@ public class Principal extends JFrame {
 		mnArchivo.add(separator);
 
 		JMenuItem mntmSalir = new JMenuItem("Salir");//Salir del programa. Comprobando que no se halla modificado el TPV
+		mntmSalir.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_Q, InputEvent.CTRL_MASK | InputEvent.SHIFT_MASK));
 		mntmSalir.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				if (Fichero.tpv.isModificado()) {//Comprueba que se ha mododificado el tpv
