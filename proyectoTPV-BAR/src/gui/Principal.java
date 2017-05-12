@@ -233,6 +233,7 @@ public class Principal extends JFrame {
 		menuBar.add(mnAyuda);
 
 		JMenuItem mntmAyuda = new JMenuItem("Ver ayuda");
+		mntmAyuda.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_F1, 0));
 		mntmAyuda.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				VerAyuda ayuda = VerAyuda.getInstance();
