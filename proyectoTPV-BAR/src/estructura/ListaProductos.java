@@ -15,6 +15,7 @@ import estructura.exceptions.NombreNoValidoException;
 import estructura.exceptions.PesoNoValidoException;
 import estructura.exceptions.PrecioNoValidoException;
 import estructura.exceptions.ProductoNoEncontradoExcepcion;
+import estructura.exceptions.ProductoYaExisteException;
 import estructura.exceptions.StockNoValidoException;
 
 /**
@@ -88,8 +89,9 @@ public class ListaProductos implements Serializable {
 	/**
 	 * Anadir producto a la lista de productos
 	 * @param producto
+	 * 
 	 */
-	public void add(Producto producto) {
+	public void add(Producto producto) throws ProductoYaExisteException {
 		listaProductos.add(producto);
 	}
 
@@ -117,7 +119,7 @@ public class ListaProductos implements Serializable {
 			throw new ProductoNoEncontradoExcepcion("ERROR:No se pudo borrar el producto.");
 		}
 	}
-
+	
 	/**
 	 * Borrar producto por posicion indicada por la fila seleccionada de la
 	 * tabla.
@@ -130,6 +132,14 @@ public class ListaProductos implements Serializable {
 		} catch (IndexOutOfBoundsException e) {
 			throw new ProductoNoEncontradoExcepcion("ERROR:No se pudo borrar el producto.");
 		}
+	}
+	
+	/**
+	 * Comprobar si existe un producto en la lista
+	 * @return si existe o no
+	 */
+	public boolean contains(Producto producto){
+		return listaProductos.contains(producto);
 	}
 	
 	/**
@@ -146,7 +156,8 @@ public class ListaProductos implements Serializable {
 	public void clear() {
 		listaProductos.clear();
 	}
-
+	
+	
 	/**
 	 * 
 	 * @param i, posicion de la lista 
@@ -193,17 +204,17 @@ public class ListaProductos implements Serializable {
 
 		for (int i = 0; i < matriz.length; i++) {
 			if (listaProductos.get(i) instanceof Bebida) {
-				matriz[j][0] = "1";
+				matriz[j][0] = String.valueOf(listaProductos.get(i).getStock());
 				matriz[j][1] = listaProductos.get(i).getNombre();
 				matriz[j][2] = String.valueOf(((Bebida) (listaProductos.get(i))).cobrar() + "€");
 				j++;
 			} else if (listaProductos.get(i) instanceof Carne) {
-				matriz[j][0] = "1";
+				matriz[j][0] = String.valueOf(listaProductos.get(i).getStock());
 				matriz[j][1] = listaProductos.get(i).getNombre();
 				matriz[j][2] = String.valueOf(((Carne) (listaProductos.get(i))).cobrar() + "€");
 				j++;
 			} else if (listaProductos.get(i) instanceof Pescado) {
-				matriz[j][0] = "1";
+				matriz[j][0] = String.valueOf(listaProductos.get(i).getStock());
 				matriz[j][1] = listaProductos.get(i).getNombre();
 				matriz[j][2] = String.valueOf(((Pescado) (listaProductos.get(i))).cobrar() + "€");
 				j++;
@@ -463,5 +474,6 @@ public class ListaProductos implements Serializable {
 		}
 		return numerodePescados;
 	}
-
+	
+	
 }

@@ -50,6 +50,14 @@ public class Producto implements Comparable<Producto>,Serializable{
 		this.identificador =  identificador;
 	}
 	
+	public Producto(int identificador,String nombre,int cantidad,double precio,Iva iva){
+		this.identificador = identificador;
+		this.nombre = nombre;
+		this.stock =  cantidad;
+		this.precio = precio;
+		this.iva = iva;
+	}
+	
 	/**
 	 * @return Iva del producto.
 	 * */
@@ -145,6 +153,15 @@ public class Producto implements Comparable<Producto>,Serializable{
 	}
 	
 	/**
+	 * Incrementar el precio del articulo
+	 * @param dinero a incrementar
+	 * @throws PrecioNoValidoException 
+	 */
+	public void incrementarPrecio(double precioIncrementar) throws PrecioNoValidoException{
+		setPrecio(getPrecio()+precioIncrementar);
+	}
+	
+	/**
 	 * Decremenar stock con una cantidad indicada.
 	 * @param stockDec, a decrementar
 	 * */
@@ -152,6 +169,8 @@ public class Producto implements Comparable<Producto>,Serializable{
 		try{
 			if((getStock()-stockDec)>=0)
 				setStock(getStock()-stockDec);
+			else
+				throw new StockNoValidoException("ERROR: El stock a reducir no puede ser superior al actual.");
 		}catch(StockNoValidoException|NumberFormatException e){
 			throw new StockNoValidoException("ERROR:Stock incorrecto");
 		}

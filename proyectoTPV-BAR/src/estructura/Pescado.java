@@ -26,6 +26,13 @@ public class Pescado extends Producto implements Cobrable,Serializable {
 		setPeso(peso);
 	}
 	
+	public Pescado(int identificador,String nombre, int stock, double precio, Iva iva, TipoPescado tipo, float peso)
+			throws NombreNoValidoException, StockNoValidoException, PrecioNoValidoException, PesoNoValidoException {
+		super(identificador,nombre, stock, precio, iva);
+		setTipo(tipo);
+		setPeso(peso);
+	}
+	
 	/**
 	 * @return tipo de pescado
 	 * */

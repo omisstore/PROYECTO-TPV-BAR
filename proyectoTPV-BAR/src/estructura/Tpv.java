@@ -16,6 +16,7 @@ import estructura.exceptions.NombreNoValidoException;
 import estructura.exceptions.PesoNoValidoException;
 import estructura.exceptions.PrecioNoValidoException;
 import estructura.exceptions.ProductoNoEncontradoExcepcion;
+import estructura.exceptions.ProductoYaExisteException;
 import estructura.exceptions.StockNoValidoException;
 import estructura.exceptions.TelefonoNoValidoException;
 import estructura.exceptions.VueltaNoValidaException;
@@ -95,47 +96,47 @@ public class Tpv implements Serializable {
 	public void asignarNumeroTelefonoEmpresa(String numTelefono) throws TelefonoNoValidoException {
 		this.empresa.setNumeroTelefono(numTelefono);
 	}
-	
+
 	/**
 	 * 
 	 * @return nombre de la empresa
 	 */
-	public String getNombreEmpresa(){
+	public String getNombreEmpresa() {
 		return empresa.getNombre();
 	}
-	
+
 	/**
 	 * 
 	 * @return provincia de la empresa
 	 */
-	public String getProvinciaEmpresa(){
+	public String getProvinciaEmpresa() {
 		return empresa.getProvincia();
 	}
-	
+
 	/**
 	 * 
 	 * @return Teléfono de la empresa
 	 */
-	public String getTelefonoEmpresa(){
+	public String getTelefonoEmpresa() {
 		return empresa.getNumeroTelefono();
 	}
-	
+
 	/**
 	 * 
 	 * @return localidad de la empresa
 	 */
-	public String getLocalidadEmpresa(){
+	public String getLocalidadEmpresa() {
 		return empresa.getLocalidad();
 	}
-	
+
 	/**
 	 * 
 	 * @return calle de la empresa
 	 */
-	public String getCalleEmpresa(){
+	public String getCalleEmpresa() {
 		return empresa.getCalle();
 	}
-	
+
 	/**
 	 * Asignar una provincia a la empresa dueña del TPV
 	 * 
@@ -175,7 +176,6 @@ public class Tpv implements Serializable {
 			throw new ListaVaciaException("ERROR:Lista vacia");
 		listaProductos.remove(new Producto(identificador));
 	}
-
 
 	/**
 	 * Borrar producto de la lista principal (cuenta)
@@ -251,21 +251,23 @@ public class Tpv implements Serializable {
 		listaPrincipal.clear();
 		return ticket;
 	}
-	
+
 	/**
 	 * Cobrar cuenta en GUI
+	 * 
 	 * @param dineroCliente
 	 * @return vuelta al cliente
 	 * @throws StockNoValidoException
 	 * @throws ProductoNoEncontradoExcepcion
 	 * @throws FicheroNoExisteException
-	 * @throws VueltaNoValidaException 
+	 * @throws VueltaNoValidaException
 	 */
-	public double cobrarGui(double dineroCliente) throws StockNoValidoException, ProductoNoEncontradoExcepcion, FicheroNoExisteException, VueltaNoValidaException {
+	public double cobrarGui(double dineroCliente) throws StockNoValidoException, ProductoNoEncontradoExcepcion,
+			FicheroNoExisteException, VueltaNoValidaException {
 		double vuelta;
 		vuelta = dineroCliente - precioTotalListaPrincipal();
 		vuelta = Math.round(vuelta * 100d) / 100d;
-		
+
 		if (vuelta >= 0) {
 			reducirStocks();
 			saveCobro();
@@ -273,13 +275,12 @@ public class Tpv implements Serializable {
 			return vuelta;
 		} else
 			throw new VueltaNoValidaException("El dinero del clente no es sificiente, para cobrar");
-		
 
 	}
-	
 
 	/**
 	 * Guardar el cobro en el fichero de tickets
+	 * 
 	 * @throws ProductoNoEncontradoExcepcion
 	 * @throws FicheroNoExisteException
 	 * 
@@ -292,7 +293,7 @@ public class Tpv implements Serializable {
 	 * ----------------Utilidad-Principal-TPV-----------
 	 * 
 	 * @throws ProductoNoEncontradoExcepcion
-	 * @throws ListaVaciaException 
+	 * @throws ListaVaciaException
 	 */
 	public String comanda() throws ProductoNoEncontradoExcepcion, ListaVaciaException {
 		return imprimirComanda();
@@ -331,31 +332,13 @@ public class Tpv implements Serializable {
 	 * @param producto
 	 *            a volcar
 	 * @throws ProductoNoEncontradoExcepcion
+	 * @throws ProductoYaExisteException
 	 */
-	public void volcarProductoListaProductosAListaPrincipal(Producto producto) throws ProductoNoEncontradoExcepcion {
+	public void volcarProductoListaProductosAListaPrincipal(Producto producto)
+			throws ProductoNoEncontradoExcepcion, ProductoYaExisteException {
 		listaPrincipal.add(listaProductos.get(listaProductos.indexOf(producto)));
 	}
 
-	/**
-	 * Vuelca un producto o varios de la lista de productos a La lista principal
-	 * de productos
-	 * 
-	 * @param posicion,
-	 *            del prodcuto en la lista de productos
-	 * @param cantidad,
-	 *            cantidad de veces que se ha pedido el producto
-	 * @throws ProductoNoEncontradoExcepcion
-	 * @throws CantidadNoValidaException
-	 */
-	public void volcarProductoListaProductosAListaPrincipal(int posicion, int cantidad)
-			throws ProductoNoEncontradoExcepcion, CantidadNoValidaException {
-		int descontar = listaProductos.get(posicion).getStock() - cantidad;
-		if (descontar < 0)
-			throw new CantidadNoValidaException("El Stock es menor que la cantidad.");
-		for (int i = 0; i < cantidad; i++) {
-			listaPrincipal.add(listaProductos.get(posicion));
-		}
-	}
 
 	/**
 	 * Vuelca un producto o varios de la lista de productos a La lista principal
@@ -367,21 +350,55 @@ public class Tpv implements Serializable {
 	 *            cantidad de veces que se ha pedido el producto
 	 * @throws ProductoNoEncontradoExcepcion
 	 * @throws CantidadNoValidaException
+	 * @throws PrecioNoValidoException
+	 * @throws StockNoValidoException
+	 * @throws NombreNoValidoException
+	 * @throws PesoNoValidoException
+	 * @throws ProductoYaExisteException
 	 */
 	public void volcarProductoListaProductosAListaPrincipalIndentificador(int identificador, int cantidad)
-			throws ProductoNoEncontradoExcepcion, CantidadNoValidaException {
-		
+			throws ProductoNoEncontradoExcepcion, CantidadNoValidaException, NombreNoValidoException,
+			StockNoValidoException, PrecioNoValidoException, PesoNoValidoException, ProductoYaExisteException {
+
 		Producto producto = new Producto(identificador);
 		int descontar = listaProductos.get(listaProductos.indexOf(producto)).getStock() - cantidad;
-		if (descontar < 0)
-			throw new CantidadNoValidaException("El Stock es menor que la cantidad.");
-		for (int i = 0; i < cantidad; i++) {
-			listaPrincipal.add(listaProductos.get(listaProductos.indexOf(producto)));
+		if (descontar < 0 || cantidad <0)
+			throw new CantidadNoValidaException("Cantidad no valida.");
+		else 
+			listaProductos.get(listaProductos.indexOf(producto)).setStock(descontar);
+		
+		if(listaPrincipal.contains(producto)){//Comprueba si la cuenta ya dispone del producto a añadir
+			listaPrincipal.get(listaPrincipal.indexOf(producto)).incrementarStock(cantidad);
+			listaPrincipal.get(listaPrincipal.indexOf(producto)).incrementarPrecio(listaProductos.get(listaProductos.indexOf(producto)).getPrecio()*cantidad);
+		
+		}else if (listaProductos.get(listaProductos.indexOf(producto)) instanceof Bebida) {
+			Bebida bebida = (Bebida) listaProductos.get(listaProductos.indexOf(producto));
+			listaPrincipal.add(new Bebida(bebida.getIdentificador(), bebida.getNombre(), cantidad, bebida.getPrecio()*cantidad,
+					bebida.getIva(), bebida.getEnvase(), bebida.getTipo()));
+		} else if (listaProductos.get(listaProductos.indexOf(producto)) instanceof Carne) {
+			Carne carne = (Carne) listaProductos.get(listaProductos.indexOf(producto));
+			listaPrincipal.add(new Carne(carne.getIdentificador(), carne.getNombre(), cantidad, carne.getPrecio()*cantidad,
+					carne.getIva(), carne.getTipo(), carne.getCorte(), carne.getPeso()));
+		} else if (listaProductos.get(listaProductos.indexOf(producto)) instanceof Pescado) {
+			Pescado pescado = (Pescado) listaProductos.get(listaProductos.indexOf(producto));
+			listaPrincipal.add(new Pescado(pescado.getIdentificador(), pescado.getNombre(), cantidad, pescado.getPrecio()*cantidad,
+					pescado.getIva(), pescado.getTipo(), pescado.getPeso()));
 		}
+
+	}
+	
+	/**
+	 * Volcar el stock de la lista principal(cuenta) al producto de la lista de productos
+	 * @param posicionArticulo de la lista principal a volcar
+	 * @throws ProductoNoEncontradoExcepcion 
+	 * @throws StockNoValidoException 
+	 */
+	public void volcarListaPrincipalAListaProductos(int posicionArticulo) throws ProductoNoEncontradoExcepcion, StockNoValidoException{
+		listaProductos.get(listaProductos.indexOf(listaPrincipal.get(posicionArticulo))).incrementarStock(listaPrincipal.get(posicionArticulo).getStock());
 	}
 	
 	
-	
+
 	/**
 	 * Vuelca un producto o varios de la lista de productos a La lista principal
 	 * de productos
@@ -392,9 +409,10 @@ public class Tpv implements Serializable {
 	 *            cantidad de veces que se ha pedido el producto
 	 * @throws ProductoNoEncontradoExcepcion
 	 * @throws CantidadNoValidaException
+	 * @throws ProductoYaExisteException
 	 */
 	public void volcarProductoListaProductosAListaPrincipal(Producto producto, int cantidad)
-			throws ProductoNoEncontradoExcepcion, CantidadNoValidaException {
+			throws ProductoNoEncontradoExcepcion, CantidadNoValidaException, ProductoYaExisteException {
 		int descontar = listaProductos.get(listaProductos.indexOf(producto)).getStock() - cantidad;
 		if (descontar < 0)
 			throw new CantidadNoValidaException("El Stock es menor que la cantidad.");
@@ -496,12 +514,12 @@ public class Tpv implements Serializable {
 	 * @return ticket de compra
 	 * @throws ProductoNoEncontradoExcepcion
 	 *             ----------------Utilidad-Principal-TPV-----------
-	 * @throws ListaVaciaException 
+	 * @throws ListaVaciaException
 	 */
 	public String imprimirTicket() throws ProductoNoEncontradoExcepcion, ListaVaciaException {
-		if(listaPrincipal.size()==0)
+		if (listaPrincipal.size() == 0)
 			throw new ListaVaciaException("Cuenta vacia");
-		
+
 		StringBuilder ticket = new StringBuilder("\t" + empresa.getNombre() + "\n" + "\t----------------------\n"
 				+ "\tC/ " + empresa.getCalle() + "/ \n\t" + empresa.getLocalidad() + "/ " + empresa.getProvincia()
 				+ "\n" + "\t\tTelf:" + empresa.getNumeroTelefono() + "\n");
@@ -510,13 +528,13 @@ public class Tpv implements Serializable {
 
 		for (int i = 0; i < listaPrincipal.size(); i++) {
 			if (listaPrincipal.get(i) instanceof Bebida) {
-				ticket.append("\t1\t" + ((Bebida) listaPrincipal.get(i)).getNombre() + "\t"
+				ticket.append("\t"+listaPrincipal.get(i).getStock()+"\t" + ((Bebida) listaPrincipal.get(i)).getNombre() + "\t"
 						+ ((Bebida) listaPrincipal.get(i)).cobrar() + "€\n");
 			} else if (listaPrincipal.get(i) instanceof Carne) {
-				ticket.append("\t1\t" + ((Carne) listaPrincipal.get(i)).getNombre() + "\t"
+				ticket.append("\t"+listaPrincipal.get(i).getStock()+"\t" + ((Carne) listaPrincipal.get(i)).getNombre() + "\t"
 						+ ((Carne) listaPrincipal.get(i)).cobrar() + "€\n");
 			} else if (listaPrincipal.get(i) instanceof Pescado) {
-				ticket.append("\t1\t" + ((Pescado) listaPrincipal.get(i)).getNombre() + "\t"
+				ticket.append("\t"+listaPrincipal.get(i).getStock()+"\t" + ((Pescado) listaPrincipal.get(i)).getNombre() + "\t"
 						+ ((Pescado) listaPrincipal.get(i)).cobrar() + "€\n");
 			}
 
@@ -531,15 +549,15 @@ public class Tpv implements Serializable {
 	 * 
 	 * @throws ProductoNoEncontradoExcepcion
 	 *             ----------------Utilidad-Principal-TPV-----------
-	 * @throws ListaVaciaException 
+	 * @throws ListaVaciaException
 	 */
 	public String imprimirComanda() throws ProductoNoEncontradoExcepcion, ListaVaciaException {
-		if (listaPrincipal.size()==0) 
+		if (listaPrincipal.size() == 0)
 			throw new ListaVaciaException("Cuenta vacía.");
-		
+
 		StringBuilder comanda = new StringBuilder("*******************\n");
 		for (int i = 0; i < listaPrincipal.size(); i++) {
-			comanda.append("1*" + listaPrincipal.get(i).getNombre() + "\n");
+			comanda.append(listaPrincipal.get(i).getStock()+"* "+ listaPrincipal.get(i).getNombre() + "\n");
 		}
 		comanda.append("*******************");
 		return comanda.toString();
@@ -608,50 +626,53 @@ public class Tpv implements Serializable {
 
 	/**
 	 * Mostrar todos los datos de la empresa
+	 * 
 	 * @return datos de la empresa
 	 */
 	public String mostrarEmpresa() {
 		return empresa.toString();
 	}
-	
+
 	/**
 	 * @return Si esta modificado o no el TPV
 	 */
 	public boolean isModificado() {
 		return modificado;
 	}
-	
+
 	/**
 	 * Indicar que se ha modificado o no el TPV
+	 * 
 	 * @param modificado
 	 */
 	public void setModificado(boolean modificado) {
 		this.modificado = modificado;
 	}
-	
+
 	/**
 	 * @return numero de bebidas en la lista de productos
 	 */
 	public int numeroDeBebidasListaDeProductos() {
 		return listaProductos.sizeBebidas();
 	}
-	
+
 	/**
 	 * @return numero de carnes de la lista de productos
 	 */
 	public int numeroDeCarnesListaDeProductos() {
 		return listaProductos.sizeCarnes();
 	}
-	
+
 	/**
-	 * @return numero de pescados en la lista de productos 
+	 * @return numero de pescados en la lista de productos
 	 */
 	public int numeroDePescadosListaDeProductos() {
 		return listaProductos.sizePescados();
 	}
-	
+
 	/**
 	 * Pasar a matriz, solo las bebidas de la lista de productos
+	 * 
 	 * @return matriz de bebidas
 	 */
 	public String[][] pasoAMatrizBebidaListaProductos() {
@@ -660,29 +681,31 @@ public class Tpv implements Serializable {
 
 	/**
 	 * Pasar a matriz, solo las carnes de la lista de productos
+	 * 
 	 * @return matriz de carnes
 	 */
 	public String[][] pasoAMatrizCarneListaProductos() {
 		return listaProductos.pasoAMatrizCarne();
 	}
-	
+
 	/**
 	 * Pasar a matriz, solo los pescados de la lista de productos
+	 * 
 	 * @return matriz de pescados
 	 */
 	public String[][] pasoAMatrizPescadoListaProductos() {
 		return listaProductos.pasoAMatrizPescado();
 	}
-	
+
 	/**
-	 * Pasar a matriz la cuenta 
+	 * Pasar a matriz la cuenta
+	 * 
 	 * @return matriz de la cuenta
 	 */
 	public String[][] pasoAMatrizCuenta() {
 		return listaPrincipal.pasoAMatriz();
 	}
-	
-	
+
 	/**
 	 * Mostrar lista principal (cuenta)
 	 * 
@@ -691,6 +714,42 @@ public class Tpv implements Serializable {
 	 */
 	public String mostrarListaPrincipal() throws ListaVaciaException {
 		return listaPrincipal.mostrarTodosBreve();
+	}
+	
+	/**
+	 * 
+	 * @param posicionArticuloCuenta
+	 * @param stockADecrementar
+	 * @throws ProductoNoEncontradoExcepcion
+	 * @throws StockNoValidoException 
+	 */
+	public void decrementarStockProductoCuenta(int posicionArticuloCuenta, int stockADecrementar) throws ProductoNoEncontradoExcepcion, StockNoValidoException {
+		listaPrincipal.get(posicionArticuloCuenta).decrementarStock(stockADecrementar);
+		listaProductos.get(listaProductos.indexOf(listaPrincipal.get(posicionArticuloCuenta))).incrementarStock(stockADecrementar);
+		
+	}
+	
+	/**
+	 * Comprobar que no exista ningún articulo en la cuenta con el número de stock a 0
+	 * @throws ProductoNoEncontradoExcepcion 
+	 */
+	public void comprobarStockCuenta() throws ProductoNoEncontradoExcepcion {
+		for (int i = 0; i < listaPrincipal.size(); i++) {
+			if(listaPrincipal.get(i).getStock() == 0)
+				listaPrincipal.removeForTable(i);
+		}
+		
+	}
+
+	/**
+	 * Refrescar los precios de todos los productos de la lista tomando en cuenta su stock y el precio del articulo.
+	 * @throws PrecioNoValidoException
+	 * @throws ProductoNoEncontradoExcepcion
+	 */
+	public void refrescarPrecioProductoCuenta() throws PrecioNoValidoException, ProductoNoEncontradoExcepcion {
+		for (int i = 0; i < listaPrincipal.size(); i++) {
+			listaPrincipal.get(i).setPrecio(listaProductos.get(listaProductos.indexOf(listaPrincipal.get(i))).getPrecio()*listaPrincipal.get(i).getStock());
+		}
 	}
 
 }

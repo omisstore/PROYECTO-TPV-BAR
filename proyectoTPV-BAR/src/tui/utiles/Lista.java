@@ -2,7 +2,6 @@ package tui.utiles;
 
 import java.util.*;
 
-import tui.utiles.Teclado;
 
 /**
  * 3. Entrega la clase Lista que:

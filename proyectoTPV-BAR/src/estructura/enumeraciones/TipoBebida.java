@@ -1,8 +1,8 @@
 package estructura.enumeraciones;
 
 public enum TipoBebida {
-	ALCHOLICA(0.10F),
-	NORMAL(0.0F);
+	NORMAL(0.0F),
+	ALCHOLICA(0.10F);
 	
 	private float impuesto;
 	private TipoBebida(float impuesto) {

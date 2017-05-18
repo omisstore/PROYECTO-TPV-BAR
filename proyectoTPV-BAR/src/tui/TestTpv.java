@@ -18,6 +18,7 @@ import estructura.exceptions.NombreNoValidoException;
 import estructura.exceptions.PesoNoValidoException;
 import estructura.exceptions.PrecioNoValidoException;
 import estructura.exceptions.ProductoNoEncontradoExcepcion;
+import estructura.exceptions.ProductoYaExisteException;
 import estructura.exceptions.StockNoValidoException;
 import estructura.exceptions.TelefonoNoValidoException;
 import tui.utiles.DeseaContinuar;
@@ -702,7 +703,7 @@ public class TestTpv {
 			System.out.println(getTpv().mostrarPescadosListaProducos());
 			Producto producto = new Producto(Teclado.leerEntero("Identificador"));
 			getTpv().volcarProductoListaProductosAListaPrincipal(producto, Teclado.leerEntero("Cantidad"));
-		} catch (ProductoNoEncontradoExcepcion | ListaVaciaException | CantidadNoValidaException e) {
+		} catch (ProductoNoEncontradoExcepcion | ListaVaciaException | CantidadNoValidaException | ProductoYaExisteException e) {
 			System.err.println(e.getMessage());
 		}
 
@@ -717,7 +718,7 @@ public class TestTpv {
 			System.out.println(getTpv().mostrarCarnesListaProducos());
 			Producto producto = new Producto(Teclado.leerEntero("Identificador"));
 			getTpv().volcarProductoListaProductosAListaPrincipal(producto, Teclado.leerEntero("Cantidad"));
-		} catch (ProductoNoEncontradoExcepcion | ListaVaciaException | CantidadNoValidaException e) {
+		} catch (ProductoNoEncontradoExcepcion | ListaVaciaException | CantidadNoValidaException | ProductoYaExisteException e) {
 			System.err.println(e.getMessage());
 		}
 	}
@@ -731,7 +732,7 @@ public class TestTpv {
 			System.out.println(getTpv().mostrarBebidasListaProducos());
 			Producto producto = new Producto(Teclado.leerEntero("Identificador"));
 			getTpv().volcarProductoListaProductosAListaPrincipal(producto, Teclado.leerEntero("Cantidad"));
-		} catch (ProductoNoEncontradoExcepcion | ListaVaciaException | CantidadNoValidaException e) {
+		} catch (ProductoNoEncontradoExcepcion | ListaVaciaException | CantidadNoValidaException | ProductoYaExisteException e) {
 			System.err.println(e.getMessage());
 		}
 	}

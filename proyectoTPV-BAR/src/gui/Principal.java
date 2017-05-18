@@ -12,6 +12,7 @@ import estructura.Filtro;
 import estructura.Tpv;
 import estructura.exceptions.ListaVaciaException;
 import estructura.exceptions.ProductoNoEncontradoExcepcion;
+import estructura.exceptions.StockNoValidoException;
 
 import javax.swing.JTabbedPane;
 import javax.swing.JButton;
@@ -42,6 +43,9 @@ import javax.swing.JScrollPane;
 import javax.swing.KeyStroke;
 import java.awt.event.KeyEvent;
 import java.awt.event.InputEvent;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
+import javax.swing.ImageIcon;
 
 /**
  * GUI Principal del TPV-BAR
@@ -89,7 +93,17 @@ public class Principal extends JFrame {
 	 * Create the frame.
 	 */
 	public Principal() {
-		setIconImage(Toolkit.getDefaultToolkit().getImage("img/LogoTpv.png"));//logo del TPV
+		addWindowListener(new WindowAdapter() {
+			@Override
+			public void windowClosing(WindowEvent e) {
+				salir();
+			}
+			@Override
+			public void windowClosed(WindowEvent e) {
+				salir();
+			}
+		});
+		setIconImage(Toolkit.getDefaultToolkit().getImage("src/img/LogoTpv.png"));//logo del TPV
 		setResizable(false);
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setBounds(100, 100, 684, 616);
@@ -208,23 +222,7 @@ public class Principal extends JFrame {
 		mntmSalir.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_Q, InputEvent.CTRL_MASK | InputEvent.SHIFT_MASK));
 		mntmSalir.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				if (Fichero.tpv.isModificado()) {//Comprueba que se ha mododificado el tpv
-					Object[] opciones = new Object[] { "Si", "No", "Cancelar" };
-					int respuesta = JOptionPane.showOptionDialog(null,
-							"No se ha guardado los cambios,¿Deseas guardar los cambios?", "No has guardado",
-							JOptionPane.DEFAULT_OPTION, JOptionPane.WARNING_MESSAGE, null, opciones, opciones[0]);
-					switch (respuesta) {
-					case 0://Se desea que se guarde los cambios y se salga del programa
-						guardarComoFichero();
-						System.exit(0);
-						break;
-					case 1://Se desea salir del programa sin guardar los cambios
-						System.exit(0);
-						break;
-					}
-				} else {
-					System.exit(0);
-				}
+				salir();
 			}
 		});
 		mnArchivo.add(mntmSalir);
@@ -275,7 +273,7 @@ public class Principal extends JFrame {
 				tableAnadirCarneACuenta.setVisible(true);
 				tableAnadirPescadoACuenta.setVisible(false);
 				tableAnadirBebidaACuenta.setVisible(false);
-				refrescarTablaAnadirCarnesCuena();
+				refrescarTablaAnadirCarnesCuenta();
 				scrollTablaAnadirBebidaACuenta.setVisible(false);
 				scrollTablaAnadirCarneACuenta.setVisible(true);
 				scrollTablaAnadirPescadoACuenta.setVisible(false);
@@ -332,6 +330,7 @@ public class Principal extends JFrame {
 						limpiarCantidad();
 						tableAnadirCarneACuenta.clearSelection();
 						Fichero.tpv.setModificado(true);
+						refrescarTablaCarnesConf();
 					} else if (tableAnadirBebidaACuenta.getSelectedRow() != -1) {
 						int identificador = Integer.valueOf(tableAnadirBebidaACuenta
 								.getValueAt(tableAnadirBebidaACuenta.getSelectedRow(), 0).toString());
@@ -345,6 +344,7 @@ public class Principal extends JFrame {
 						limpiarCantidad();
 						tableAnadirBebidaACuenta.clearSelection();
 						Fichero.tpv.setModificado(true);
+						refrescarTablaBebidasConf();
 					} else if (tableAnadirPescadoACuenta.getSelectedRow() != -1) {
 						int identificador = Integer.valueOf(tableAnadirPescadoACuenta
 								.getValueAt(tableAnadirPescadoACuenta.getSelectedRow(), 0).toString());
@@ -358,18 +358,20 @@ public class Principal extends JFrame {
 						limpiarCantidad();
 						tableAnadirPescadoACuenta.clearSelection();
 						Fichero.tpv.setModificado(true);
+						refrescarTablaPescadosConf();
 					} else {
 						JOptionPane.showMessageDialog(null, "Selecciona algun produdcto, para poder añadirlo a la cuenta.",
 								"Error", JOptionPane.ERROR_MESSAGE);
 					}
-					refrescarTotalCuenta();
+					refrescarTablaCuenta();
 					tableAnadirCarneACuenta.clearSelection();
 					tableAnadirPescadoACuenta.clearSelection();
 					tableAnadirBebidaACuenta.clearSelection();
+					refrescarTotalCuenta();
 				} catch (Exception e2) {
 					JOptionPane.showMessageDialog(null, e2.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
 				}
-				refrescarTablaCuenta();
+				
 
 			}
 		});
@@ -383,8 +385,8 @@ public class Principal extends JFrame {
 				try {
 					cobrarCuenta = new CobrarCuenta();
 					cobrarCuenta.setVisible(true);
-					refrescarTablaCuenta();
 					refrescarTotalCuenta();
+					refrescarTablaCuenta();
 					Fichero.tpv.setModificado(true);
 				} catch (ProductoNoEncontradoExcepcion | ListaVaciaException e1) {
 					JOptionPane.showMessageDialog(null, e1.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
@@ -393,7 +395,7 @@ public class Principal extends JFrame {
 
 			}
 		});
-		btnCobrar.setBounds(6, 43, 117, 47);
+		btnCobrar.setBounds(6, 123, 117, 47);
 		panelPrincipal.add(btnCobrar);
 
 		JButton btnComanda = new JButton("COMANDA");//MOstrar la comanda de la cuenta
@@ -409,20 +411,20 @@ public class Principal extends JFrame {
 				
 			}
 		});
-		btnComanda.setBounds(6, 91, 117, 47);
+		btnComanda.setBounds(6, 171, 117, 47);
 		panelPrincipal.add(btnComanda);
 
 		JButton btnBorrarProdCuenta = new JButton("BORRAR");//Borrar de la cuenta un producto seleccionado
 		btnBorrarProdCuenta.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				try {
+					Fichero.tpv.volcarListaPrincipalAListaProductos(tableCuenta.getSelectedRow());
 					Fichero.tpv.removeProductoListaPrincipal(tableCuenta.getSelectedRow());
 					Fichero.tpv.setModificado(true);
-				} catch (ListaVaciaException | ProductoNoEncontradoExcepcion e1) {
-					JOptionPane.showMessageDialog(null, e1.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
-				} finally {
-					refrescarTotalCuenta();
 					refrescarTablaCuenta();
+					refrescarTotalCuenta();
+				} catch (ListaVaciaException | ProductoNoEncontradoExcepcion | StockNoValidoException e1) {
+					JOptionPane.showMessageDialog(null, e1.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
 				}
 
 			}
@@ -513,6 +515,34 @@ public class Principal extends JFrame {
 		scrollTablaAnadirPescadoACuenta.setBounds(135, 350, 417, 153);
 		panelPrincipal.add(scrollTablaAnadirPescadoACuenta);
 		scrollTablaAnadirPescadoACuenta.setViewportView(tableAnadirPescadoACuenta);
+		
+		JButton btnNewButton = new JButton("DecremStock");
+		btnNewButton.setFont(new Font("Lucida Grande", Font.PLAIN, 9));
+		btnNewButton.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				try {
+					if(Fichero.tpv.getListaPrincipal().isEmpty())
+						throw new ListaVaciaException("ERROR: Cuenta vacía");
+					
+					Fichero.tpv.decrementarStockProductoCuenta(tableCuenta.getSelectedRow(),Integer.valueOf(JOptionPane.showInputDialog(null, "Stock a reducir:")));
+					Fichero.tpv.refrescarPrecioProductoCuenta();
+					Fichero.tpv.setModificado(true);
+					refrescarTablaCuenta();
+					refrescarTotalCuenta();
+					
+					
+				} catch (Exception e1) {
+					JOptionPane.showMessageDialog(null, e1.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+				}
+			}
+		});
+		btnNewButton.setBounds(559, 109, 74, 39);
+		panelPrincipal.add(btnNewButton);
+		
+		JLabel label = new JLabel("New label");
+		label.setIcon(new ImageIcon(Principal.class.getResource("/img/LogoTpv.png")));
+		label.setBounds(6, 19, 107, 92);
+		panelPrincipal.add(label);
 		
 		// ----------CONFIGURACIÓN--------------
 		JPanel panelConfig = new JPanel();
@@ -808,7 +838,7 @@ public class Principal extends JFrame {
 	/**
 	 * Refrescar la tabla de Añadir a la cuenta, carnes
 	 */
-	private void refrescarTablaAnadirCarnesCuena() {
+	private void refrescarTablaAnadirCarnesCuenta() {
 		tableAnadirCarneACuenta.setModel(new DefaultTableModel(Fichero.tpv.pasoAMatrizCarneListaProductos(),
 				new String[] { "ID", "Nombre", "Descripcion", "Stock", "Precio", "Iva", "Tipo", "Corte", "Peso" }));
 	}
@@ -823,8 +853,10 @@ public class Principal extends JFrame {
 
 	/**
 	 * Refrescar la tabla de Añadir a la cuenta, pescados
+	 * @throws ProductoNoEncontradoExcepcion 
 	 */
-	private void refrescarTablaCuenta() {
+	private void refrescarTablaCuenta() throws ProductoNoEncontradoExcepcion {
+		Fichero.tpv.comprobarStockCuenta();
 		tableCuenta.setModel(
 				new DefaultTableModel(Fichero.tpv.pasoAMatrizCuenta(), new String[] { "Cant.", "Nombre", "PVP" }));
 	}
@@ -912,5 +944,26 @@ public class Principal extends JFrame {
 		}
 		Fichero.tpv.setModificado(false);
 	}
-	
+	/**
+	 * Salir del programa
+	 */
+	private void salir() {
+		if (Fichero.tpv.isModificado()) {//Comprueba que se ha mododificado el tpv
+			Object[] opciones = new Object[] { "Si", "No", "Cancelar" };
+			int respuesta = JOptionPane.showOptionDialog(null,
+					"No se ha guardado los cambios,¿Deseas guardar los cambios?", "No has guardado",
+					JOptionPane.DEFAULT_OPTION, JOptionPane.WARNING_MESSAGE, null, opciones, opciones[0]);
+			switch (respuesta) {
+			case 0://Se desea que se guarde los cambios y se salga del programa
+				guardarComoFichero();
+				System.exit(0);
+				break;
+			case 1://Se desea salir del programa sin guardar los cambios
+				System.exit(0);
+				break;
+			}
+		} else {
+			System.exit(0);
+		}
+	}
 }
