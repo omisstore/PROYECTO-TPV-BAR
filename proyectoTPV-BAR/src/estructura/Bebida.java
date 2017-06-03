@@ -31,9 +31,9 @@ public class Bebida extends Producto implements Cobrable,Serializable{
 		setTamanio(envase.tamanio());
 	}
 	
-	public Bebida(int identificador,String nombre, int stock, double precio, Iva iva,Envase envase,TipoBebida tipo)
+	public Bebida(int identificador,String nombre,String descripcion, int stock, double precio, Iva iva,Envase envase,TipoBebida tipo)
 			throws NombreNoValidoException, StockNoValidoException, PrecioNoValidoException {
-		super(identificador,nombre, stock, precio, iva);
+		super(identificador,nombre,descripcion, stock, precio, iva);
 		setEnvase(envase);
 		setTipo(tipo);
 		setTamanio(envase.tamanio());

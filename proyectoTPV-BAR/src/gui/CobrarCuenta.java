@@ -66,8 +66,10 @@ public class CobrarCuenta extends JDialog {
 							double vuelta = Fichero.tpv.cobrarGui(Double.valueOf(JOptionPane.showInputDialog(null, "Dinero del cliente?")));
 							JOptionPane.showMessageDialog(null,"Cobro finalizado.\n Vuelta: "+vuelta+"€", "Cobro", JOptionPane.INFORMATION_MESSAGE);
 							setVisible(false);
-						} catch (Exception e1) {
-							JOptionPane.showMessageDialog(null, e1.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+						}catch (NumberFormatException e2) {
+							JOptionPane.showMessageDialog(null, "Cantidad incorrecta.", "Error", JOptionPane.ERROR_MESSAGE);
+						}catch (Exception e3) {
+							JOptionPane.showMessageDialog(null, e3.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
 						}
 					}
 				});

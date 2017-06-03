@@ -32,9 +32,9 @@ public class Carne extends Producto implements Cobrable,Serializable{
 		setPeso(peso);
 	}
 	
-	public Carne(int identificador,String nombre, int stock, double precio, Iva iva, TipoCarne tipo, Corte corte,float peso)
+	public Carne(int identificador,String nombre,String descripcion, int stock, double precio, Iva iva, TipoCarne tipo, Corte corte,float peso)
 			throws NombreNoValidoException, StockNoValidoException, PrecioNoValidoException, PesoNoValidoException {
-		super(identificador,nombre, stock, precio, iva);
+		super(identificador,nombre,descripcion, stock, precio, iva);
 		setTipo(tipo);
 		setCorte(corte);
 		setPeso(peso);

@@ -27,7 +27,11 @@ public class Fichero implements Serializable{
 	}
 	
 	
-	
+	/**
+	 * Comprueba que el nombre del fichero sea el correcto
+	 * @param file
+	 * @return Fichero con extension
+	 */
 	public static File comprobarFichero(File file){
 		if(EXTENSION.matcher(file.getName()).matches())
 			return file;

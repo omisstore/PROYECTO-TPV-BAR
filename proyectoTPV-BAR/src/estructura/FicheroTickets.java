@@ -10,13 +10,13 @@ import java.io.Serializable;
 
 import estructura.exceptions.FicheroNoExisteException;
 
-public class FicheroTickets implements Serializable{
+public class FicheroTickets implements Serializable {
 	/**
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
 	private File file;
-	
+
 	/**
 	 * 
 	 * */
@@ -27,38 +27,40 @@ public class FicheroTickets implements Serializable{
 			throw new FicheroNoExisteException("ERROR:Fichero de registros, no encontrado");
 		}
 	}
-	
+
 	/**
 	 * 
 	 * */
-	public void escribir(String escritura) throws FicheroNoExisteException{
-		
-		
-		try (FileWriter fichero =new FileWriter(file,true);PrintWriter pw =  new PrintWriter(fichero)){
+	public void escribir(String escritura) throws FicheroNoExisteException {
+
+		try (FileWriter fichero = new FileWriter(file, true); PrintWriter pw = new PrintWriter(fichero)) {
 			pw.print(escritura);
 		} catch (Exception e) {
 			throw new FicheroNoExisteException("ERROR:No se ha podido escribir el fichero");
 		}
 	}
-	
+
 	/**
-	 * @throws FicheroNoExisteException 
+	 * @throws FicheroNoExisteException
 	 * 
-	 * */
-	public String leer() throws FicheroNoExisteException{
-		StringBuilder cadena =  new StringBuilder();
+	 */
+	public String leer() throws FicheroNoExisteException {
+		StringBuilder cadena = new StringBuilder();
+		String linea ="";
 		try (BufferedReader fileReader = new BufferedReader(new FileReader(file))) {
-			cadena.append(fileReader.readLine());
-			while (cadena!=null) {
-				if (cadena!=null) {
-					cadena.append(fileReader.readLine());
-				}
+			while(true){
+				linea = fileReader.readLine();
+				if(linea != null)
+					cadena.append(linea);
+				else
+					break;
 			}
 			return cadena.toString();
+			
 		} catch (IOException e) {
 			throw new FicheroNoExisteException("ERROR:No se ha podido leer el fichero");
 		}
-		
+
 	}
-	
+
 }

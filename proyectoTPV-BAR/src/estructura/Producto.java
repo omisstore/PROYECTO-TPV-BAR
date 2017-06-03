@@ -50,8 +50,9 @@ public class Producto implements Comparable<Producto>,Serializable{
 		this.identificador =  identificador;
 	}
 	
-	public Producto(int identificador,String nombre,int cantidad,double precio,Iva iva){
+	public Producto(int identificador,String nombre,String descripcion,int cantidad,double precio,Iva iva){
 		this.identificador = identificador;
+		this.descripcion = descripcion;
 		this.nombre = nombre;
 		this.stock =  cantidad;
 		this.precio = precio;

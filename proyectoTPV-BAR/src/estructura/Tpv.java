@@ -246,7 +246,7 @@ public class Tpv implements Serializable {
 		} while (vuelta < 0 || vuelta > 0);
 
 		String ticket = imprimirTicket();
-		reducirStocks();
+		reducirStocksTui();
 		saveCobro();
 		listaPrincipal.clear();
 		return ticket;
@@ -261,20 +261,20 @@ public class Tpv implements Serializable {
 	 * @throws ProductoNoEncontradoExcepcion
 	 * @throws FicheroNoExisteException
 	 * @throws VueltaNoValidaException
+	 * @throws ListaVaciaException 
 	 */
 	public double cobrarGui(double dineroCliente) throws StockNoValidoException, ProductoNoEncontradoExcepcion,
-			FicheroNoExisteException, VueltaNoValidaException {
+			FicheroNoExisteException, VueltaNoValidaException, ListaVaciaException {
 		double vuelta;
 		vuelta = dineroCliente - precioTotalListaPrincipal();
 		vuelta = Math.round(vuelta * 100d) / 100d;
 
 		if (vuelta >= 0) {
-			reducirStocks();
 			saveCobro();
 			listaPrincipal.clear();
 			return vuelta;
 		} else
-			throw new VueltaNoValidaException("El dinero del clente no es sificiente, para cobrar");
+			throw new VueltaNoValidaException("El dinero del clente no es suficiente, para cobrar");
 
 	}
 
@@ -283,10 +283,11 @@ public class Tpv implements Serializable {
 	 * 
 	 * @throws ProductoNoEncontradoExcepcion
 	 * @throws FicheroNoExisteException
+	 * @throws ListaVaciaException 
 	 * 
 	 */
-	private void saveCobro() throws FicheroNoExisteException, ProductoNoEncontradoExcepcion {
-		fileRegistro.escribir(LocalDate.now() + "\t" + precioTotalListaPrincipal() + "€" + "\n");
+	private void saveCobro() throws FicheroNoExisteException, ProductoNoEncontradoExcepcion, ListaVaciaException {
+		fileRegistro.escribir(imprimirTicket()+"\n--------------------------\n");
 	}
 
 	/**
@@ -301,12 +302,12 @@ public class Tpv implements Serializable {
 
 	/**
 	 * Reducir stock de todos los productos que contiene la lista principal de
-	 * producto.
+	 * producto.Usado solo en la interfaz de texto
 	 * 
 	 * @throws ProductoNoEncontradoExcepcion
 	 * @throws StockNoValidoException
 	 */
-	private void reducirStocks() throws StockNoValidoException, ProductoNoEncontradoExcepcion {
+	private void reducirStocksTui() throws StockNoValidoException, ProductoNoEncontradoExcepcion {
 		for (int i = 0; i < listaPrincipal.size(); i++) {
 			listaPrincipal.get(i).decrementarStock(1);
 		}
@@ -363,7 +364,7 @@ public class Tpv implements Serializable {
 		Producto producto = new Producto(identificador);
 		int descontar = listaProductos.get(listaProductos.indexOf(producto)).getStock() - cantidad;
 		if (descontar < 0 || cantidad <0)
-			throw new CantidadNoValidaException("Cantidad no valida.");
+			throw new CantidadNoValidaException("Error: La cantidad indicada supera al stock del articulo.");
 		else 
 			listaProductos.get(listaProductos.indexOf(producto)).setStock(descontar);
 		
@@ -373,15 +374,15 @@ public class Tpv implements Serializable {
 		
 		}else if (listaProductos.get(listaProductos.indexOf(producto)) instanceof Bebida) {
 			Bebida bebida = (Bebida) listaProductos.get(listaProductos.indexOf(producto));
-			listaPrincipal.add(new Bebida(bebida.getIdentificador(), bebida.getNombre(), cantidad, bebida.getPrecio()*cantidad,
+			listaPrincipal.add(new Bebida(bebida.getIdentificador(), bebida.getNombre(),bebida.getDescripcion(), cantidad, bebida.getPrecio()*cantidad,
 					bebida.getIva(), bebida.getEnvase(), bebida.getTipo()));
 		} else if (listaProductos.get(listaProductos.indexOf(producto)) instanceof Carne) {
 			Carne carne = (Carne) listaProductos.get(listaProductos.indexOf(producto));
-			listaPrincipal.add(new Carne(carne.getIdentificador(), carne.getNombre(), cantidad, carne.getPrecio()*cantidad,
+			listaPrincipal.add(new Carne(carne.getIdentificador(),carne.getDescripcion(), carne.getNombre(), cantidad, carne.getPrecio()*cantidad,
 					carne.getIva(), carne.getTipo(), carne.getCorte(), carne.getPeso()));
 		} else if (listaProductos.get(listaProductos.indexOf(producto)) instanceof Pescado) {
 			Pescado pescado = (Pescado) listaProductos.get(listaProductos.indexOf(producto));
-			listaPrincipal.add(new Pescado(pescado.getIdentificador(), pescado.getNombre(), cantidad, pescado.getPrecio()*cantidad,
+			listaPrincipal.add(new Pescado(pescado.getIdentificador(), pescado.getNombre(),pescado.getDescripcion(), cantidad, pescado.getPrecio()*cantidad,
 					pescado.getIva(), pescado.getTipo(), pescado.getPeso()));
 		}
 
@@ -539,7 +540,7 @@ public class Tpv implements Serializable {
 			}
 
 		}
-		ticket.append("\n\t---------------------\n" + "\tTOTAL:\t" + precioTotalListaPrincipal() + "€");
+		ticket.append("\n\t---------------------\n" + "\tTOTAL:\t" + precioTotalListaPrincipal() + "€\n");
 		return ticket.toString();
 
 	}
@@ -750,6 +751,15 @@ public class Tpv implements Serializable {
 		for (int i = 0; i < listaPrincipal.size(); i++) {
 			listaPrincipal.get(i).setPrecio(listaProductos.get(listaProductos.indexOf(listaPrincipal.get(i))).getPrecio()*listaPrincipal.get(i).getStock());
 		}
+	}
+	
+	/**
+	 * Leer los ticket del fichero de registros
+	 * @return tickets
+	 * @throws FicheroNoExisteException
+	 */
+	public String leerTickets() throws FicheroNoExisteException {
+		return fileRegistro.leer();
 	}
 
 }

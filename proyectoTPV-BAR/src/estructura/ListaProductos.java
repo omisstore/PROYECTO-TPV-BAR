@@ -4,6 +4,7 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collections;
 
+
 import estructura.enumeraciones.Corte;
 import estructura.enumeraciones.Envase;
 import estructura.enumeraciones.Iva;
@@ -26,7 +27,7 @@ import estructura.exceptions.StockNoValidoException;
 public class ListaProductos implements Serializable {
 	private static final long serialVersionUID = 1L;
 	private ArrayList<Producto> listaProductos = new ArrayList<Producto>();
-	
+	private int ultimoIdentificadorProductos;
 	/**
 	 * Anadir una bebida a la liasta de productos
 	 * @param nombre
@@ -42,7 +43,8 @@ public class ListaProductos implements Serializable {
 	 */
 	public void addBebida(String nombre, String descripcion, int stock, double precio, Iva iva, Envase envase,
 			TipoBebida tipo) throws NombreNoValidoException, StockNoValidoException, PrecioNoValidoException {
-		listaProductos.add(new Bebida(nombre, descripcion, stock, precio, iva, envase, tipo));
+		refrescarUltimoIndicadorProducto();
+		listaProductos.add(new Bebida((this.ultimoIdentificadorProductos+1),nombre, descripcion, stock, precio, iva, envase, tipo));
 	}
 	
 	/**
@@ -63,7 +65,8 @@ public class ListaProductos implements Serializable {
 	public void addCarne(String nombre, String descripcion, int stock, double precio, Iva iva, TipoCarne tipo,
 			Corte corte, float peso)
 			throws NombreNoValidoException, StockNoValidoException, PrecioNoValidoException, PesoNoValidoException {
-		listaProductos.add(new Carne(nombre, descripcion, stock, precio, iva, tipo, corte, peso));
+		refrescarUltimoIndicadorProducto();
+		listaProductos.add(new Carne((this.ultimoIdentificadorProductos+1),nombre, descripcion, stock, precio, iva, tipo, corte, peso));
 	}
 	
 	/**
@@ -83,7 +86,8 @@ public class ListaProductos implements Serializable {
 	public void addPescado(String nombre, String descripcion, int stock, double precio, Iva iva, TipoPescado tipo,
 			float peso)
 			throws NombreNoValidoException, StockNoValidoException, PrecioNoValidoException, PesoNoValidoException {
-		listaProductos.add(new Pescado(nombre, descripcion, stock, precio, iva, tipo, peso));
+		refrescarUltimoIndicadorProducto();
+		listaProductos.add(new Pescado((this.ultimoIdentificadorProductos+1),nombre, descripcion, stock, precio, iva, tipo, peso));
 	}
 
 	/**
@@ -157,6 +161,17 @@ public class ListaProductos implements Serializable {
 		listaProductos.clear();
 	}
 	
+	/**
+	 * Refresca y actualiza el campo contador, para que los siguientes productos a crear, sean correlativos.
+	 */
+	private void refrescarUltimoIndicadorProducto(){
+		int ultimoContador=0;
+		for (Producto producto: listaProductos) {
+			if(producto.getIdentificador()>ultimoContador)
+				ultimoContador = producto.getIdentificador();
+		}
+		this.ultimoIdentificadorProductos = ultimoContador;
+	}
 	
 	/**
 	 * 

@@ -108,7 +108,7 @@ public class Principal extends JFrame {
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setBounds(100, 100, 684, 616);
 		setTitle("Sin titulo");
-		
+
 		
 		JMenuBar menuBar = new JMenuBar();
 		setJMenuBar(menuBar);
@@ -368,8 +368,10 @@ public class Principal extends JFrame {
 					tableAnadirPescadoACuenta.clearSelection();
 					tableAnadirBebidaACuenta.clearSelection();
 					refrescarTotalCuenta();
-				} catch (Exception e2) {
-					JOptionPane.showMessageDialog(null, e2.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+				} catch (NumberFormatException e2) {
+					JOptionPane.showMessageDialog(null, "Cantidad no valida.", "Error", JOptionPane.ERROR_MESSAGE);
+				} catch (Exception e3) {
+					JOptionPane.showMessageDialog(null, e3.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
 				}
 				
 
@@ -798,6 +800,16 @@ public class Principal extends JFrame {
 		lblProductos.setBounds(279, 17, 117, 16);
 		panelConfig.add(lblProductos);
 		
+		JButton btnTickets = new JButton("TICKETS");
+		btnTickets.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				MostrarTickets mostrarTicket =  new MostrarTickets();
+				mostrarTicket.setVisible(true);
+			}
+		});
+		btnTickets.setBounds(6, 324, 117, 41);
+		panelConfig.add(btnTickets);
+		
 
 	}
 
@@ -910,7 +922,7 @@ public class Principal extends JFrame {
 
 			if (jFileChooser.getSelectedFile().exists()) {
 				Object[] opciones = new Object[] { "Si", "No" };
-				int respuesta = JOptionPane.showOptionDialog(null, "Ya existe.", "¿Deseas sobreescribir los cambios?",
+				int respuesta = JOptionPane.showOptionDialog(null, "¿Deseas sobreescribir los cambios?","Ya existe.",
 						JOptionPane.DEFAULT_OPTION, JOptionPane.WARNING_MESSAGE, null, opciones, opciones[0]);
 
 				switch (respuesta) {
@@ -960,6 +972,8 @@ public class Principal extends JFrame {
 				break;
 			case 1://Se desea salir del programa sin guardar los cambios
 				System.exit(0);
+				break;
+			default:
 				break;
 			}
 		} else {
