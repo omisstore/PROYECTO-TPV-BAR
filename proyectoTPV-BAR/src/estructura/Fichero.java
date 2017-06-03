@@ -20,8 +20,8 @@ public class Fichero implements Serializable{
 	 * Abrir
 	 * Permite la lectura del fichero al programa.
 	 * */
-	public static void abrir(File file) throws IOException, ClassNotFoundException{
-		try(ObjectInputStream in = new ObjectInputStream(new FileInputStream(file))){
+	public static void abrir(File fichero) throws IOException, ClassNotFoundException{
+		try(ObjectInputStream in = new ObjectInputStream(new FileInputStream(fichero))){
 			tpv = (Tpv)in.readObject();
 		}
 	}
@@ -47,7 +47,7 @@ public class Fichero implements Serializable{
 	 * @throws IOException
 	 */
 	public static void guardar(Object obj, File fichero) throws IOException{
-		try (ObjectOutputStream out = new ObjectOutputStream(new BufferedOutputStream(new FileOutputStream(fichero+".obj")))){	
+		try (ObjectOutputStream out = new ObjectOutputStream(new BufferedOutputStream(new FileOutputStream(comprobarFichero(fichero))))){	
 			out.writeObject(obj);	
 		}
 	}	
