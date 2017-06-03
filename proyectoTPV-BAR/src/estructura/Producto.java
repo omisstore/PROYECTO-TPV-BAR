@@ -50,13 +50,13 @@ public class Producto implements Comparable<Producto>,Serializable{
 		this.identificador =  identificador;
 	}
 	
-	public Producto(int identificador,String nombre,String descripcion,int cantidad,double precio,Iva iva){
+	public Producto(int identificador,String nombre,String descripcion,int cantidad,double precio,Iva iva) throws NombreNoValidoException, StockNoValidoException, PrecioNoValidoException{
 		this.identificador = identificador;
-		this.descripcion = descripcion;
-		this.nombre = nombre;
-		this.stock =  cantidad;
-		this.precio = precio;
-		this.iva = iva;
+		setDescripcion(descripcion);
+		setNombre(nombre);
+		setStock(cantidad);
+		setPrecio(precio);
+		setIva(iva);
 	}
 	
 	/**
