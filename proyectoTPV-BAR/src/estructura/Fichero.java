@@ -47,7 +47,7 @@ public class Fichero implements Serializable{
 	 * @throws IOException
 	 */
 	public static void guardar(Object obj, File fichero) throws IOException{
-		try (ObjectOutputStream out = new ObjectOutputStream(new BufferedOutputStream(new FileOutputStream(fichero)))){	
+		try (ObjectOutputStream out = new ObjectOutputStream(new BufferedOutputStream(new FileOutputStream(fichero+".obj")))){	
 			out.writeObject(obj);	
 		}
 	}	
