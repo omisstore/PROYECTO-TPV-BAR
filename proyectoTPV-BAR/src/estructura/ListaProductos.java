@@ -4,7 +4,6 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collections;
 
-
 import estructura.enumeraciones.Corte;
 import estructura.enumeraciones.Envase;
 import estructura.enumeraciones.Iva;
@@ -21,6 +20,7 @@ import estructura.exceptions.StockNoValidoException;
 
 /**
  * Lista de productos. Maneja productos
+ * 
  * @author Javier Ponferrada López
  * @version 1.0
  */
@@ -28,8 +28,10 @@ public class ListaProductos implements Serializable {
 	private static final long serialVersionUID = 1L;
 	private ArrayList<Producto> listaProductos = new ArrayList<Producto>();
 	private int ultimoIdentificadorProductos;
+
 	/**
 	 * Anadir una bebida a la liasta de productos
+	 * 
 	 * @param nombre
 	 * @param descripcion
 	 * @param stock
@@ -44,11 +46,13 @@ public class ListaProductos implements Serializable {
 	public void addBebida(String nombre, String descripcion, int stock, double precio, Iva iva, Envase envase,
 			TipoBebida tipo) throws NombreNoValidoException, StockNoValidoException, PrecioNoValidoException {
 		refrescarUltimoIndicadorProducto();
-		listaProductos.add(new Bebida((this.ultimoIdentificadorProductos+1),nombre, descripcion, stock, precio, iva, envase, tipo));
+		listaProductos.add(new Bebida((this.ultimoIdentificadorProductos + 1), nombre, descripcion, stock, precio, iva,
+				envase, tipo));
 	}
-	
+
 	/**
 	 * Anadir una carne a la lista de productos
+	 * 
 	 * @param nombre
 	 * @param descripcion
 	 * @param stock
@@ -66,11 +70,13 @@ public class ListaProductos implements Serializable {
 			Corte corte, float peso)
 			throws NombreNoValidoException, StockNoValidoException, PrecioNoValidoException, PesoNoValidoException {
 		refrescarUltimoIndicadorProducto();
-		listaProductos.add(new Carne((this.ultimoIdentificadorProductos+1),nombre, descripcion, stock, precio, iva, tipo, corte, peso));
+		listaProductos.add(new Carne((this.ultimoIdentificadorProductos + 1), nombre, descripcion, stock, precio, iva,
+				tipo, corte, peso));
 	}
-	
+
 	/**
 	 * Anadir un pescado a la lista de productos
+	 * 
 	 * @param nombre
 	 * @param descripcion
 	 * @param stock
@@ -87,11 +93,13 @@ public class ListaProductos implements Serializable {
 			float peso)
 			throws NombreNoValidoException, StockNoValidoException, PrecioNoValidoException, PesoNoValidoException {
 		refrescarUltimoIndicadorProducto();
-		listaProductos.add(new Pescado((this.ultimoIdentificadorProductos+1),nombre, descripcion, stock, precio, iva, tipo, peso));
+		listaProductos.add(new Pescado((this.ultimoIdentificadorProductos + 1), nombre, descripcion, stock, precio, iva,
+				tipo, peso));
 	}
 
 	/**
 	 * Anadir producto a la lista de productos
+	 * 
 	 * @param producto
 	 * 
 	 */
@@ -101,7 +109,9 @@ public class ListaProductos implements Serializable {
 
 	/**
 	 * Borrar producto
-	 * @param producto a borrar de la lista de productos
+	 * 
+	 * @param producto
+	 *            a borrar de la lista de productos
 	 */
 	public void remove(Producto producto) throws ProductoNoEncontradoExcepcion {
 
@@ -123,7 +133,7 @@ public class ListaProductos implements Serializable {
 			throw new ProductoNoEncontradoExcepcion("ERROR:No se pudo borrar el producto.");
 		}
 	}
-	
+
 	/**
 	 * Borrar producto por posicion indicada por la fila seleccionada de la
 	 * tabla.
@@ -137,45 +147,49 @@ public class ListaProductos implements Serializable {
 			throw new ProductoNoEncontradoExcepcion("ERROR:No se pudo borrar el producto.");
 		}
 	}
-	
+
 	/**
 	 * Comprobar si existe un producto en la lista
+	 * 
 	 * @return si existe o no
 	 */
-	public boolean contains(Producto producto){
+	public boolean contains(Producto producto) {
 		return listaProductos.contains(producto);
 	}
-	
+
 	/**
 	 * Tamnio de la lista de productos
+	 * 
 	 * @return
 	 */
 	public int size() {
 		return listaProductos.size();
 	}
-	
+
 	/**
 	 * Limpiar la lista de productos
 	 */
 	public void clear() {
 		listaProductos.clear();
 	}
-	
+
 	/**
-	 * Refresca y actualiza el campo contador, para que los siguientes productos a crear, sean correlativos.
+	 * Refresca y actualiza el campo contador, para que los siguientes productos
+	 * a crear, sean correlativos.
 	 */
-	private void refrescarUltimoIndicadorProducto(){
-		int ultimoContador=0;
-		for (Producto producto: listaProductos) {
-			if(producto.getIdentificador()>ultimoContador)
+	private void refrescarUltimoIndicadorProducto() {
+		int ultimoContador = 0;
+		for (Producto producto : listaProductos) {
+			if (producto.getIdentificador() > ultimoContador)
 				ultimoContador = producto.getIdentificador();
 		}
 		this.ultimoIdentificadorProductos = ultimoContador;
 	}
-	
+
 	/**
 	 * 
-	 * @param i, posicion de la lista 
+	 * @param i,
+	 *            posicion de la lista
 	 * @return producto que se encuentra en la posicion de la lista
 	 * @throws ProductoNoEncontradoExcepcion
 	 */
@@ -187,7 +201,7 @@ public class ListaProductos implements Serializable {
 		}
 
 	}
-	
+
 	/**
 	 * @param producto
 	 * @return posicion del producto en la lista
@@ -217,23 +231,11 @@ public class ListaProductos implements Serializable {
 		String[][] matriz = new String[listaProductos.size()][3];
 		int j = 0;
 
-		for (int i = 0; i < matriz.length; i++) {
-			if (listaProductos.get(i) instanceof Bebida) {
-				matriz[j][0] = String.valueOf(listaProductos.get(i).getStock());
-				matriz[j][1] = listaProductos.get(i).getNombre();
-				matriz[j][2] = String.valueOf(((Bebida) (listaProductos.get(i))).cobrar() + "€");
-				j++;
-			} else if (listaProductos.get(i) instanceof Carne) {
-				matriz[j][0] = String.valueOf(listaProductos.get(i).getStock());
-				matriz[j][1] = listaProductos.get(i).getNombre();
-				matriz[j][2] = String.valueOf(((Carne) (listaProductos.get(i))).cobrar() + "€");
-				j++;
-			} else if (listaProductos.get(i) instanceof Pescado) {
-				matriz[j][0] = String.valueOf(listaProductos.get(i).getStock());
-				matriz[j][1] = listaProductos.get(i).getNombre();
-				matriz[j][2] = String.valueOf(((Pescado) (listaProductos.get(i))).cobrar() + "€");
-				j++;
-			}
+		for (Producto producto : listaProductos) {
+			matriz[j][0] = String.valueOf(producto.getStock());
+			matriz[j][1] = producto.getNombre();
+			matriz[j][2] = String.valueOf(((Cobrable) producto).cobrar() + "€");
+			j++;
 
 		}
 
@@ -257,7 +259,7 @@ public class ListaProductos implements Serializable {
 				matriz[j][3] = String.valueOf(((Bebida) (listaProductos.get(i))).getStock());
 				matriz[j][4] = String.valueOf(((Bebida) (listaProductos.get(i))).getPrecio());
 				matriz[j][5] = String.valueOf(((Bebida) (listaProductos.get(i))).getIva().valor() + "%");
-				matriz[j][6] = ((Bebida) (listaProductos.get(i))).getEnvase().tamanio();
+				matriz[j][6] = ((Bebida) (listaProductos.get(i))).getTamanio();
 				matriz[j][7] = String.valueOf(((Bebida) (listaProductos.get(i))).getTipo().impuesto() + "%");
 				j++;
 			}
@@ -322,6 +324,7 @@ public class ListaProductos implements Serializable {
 
 	/**
 	 * Mostrar todos los productos de la lista
+	 * 
 	 * @return todos los productos
 	 * @throws ListaVaciaException
 	 */
@@ -341,6 +344,7 @@ public class ListaProductos implements Serializable {
 
 	/**
 	 * Mostrar de forma breve todos los productos de la lista
+	 * 
 	 * @return toda la lista con formato breve
 	 * @throws ListaVaciaException
 	 */
@@ -351,24 +355,16 @@ public class ListaProductos implements Serializable {
 		StringBuilder cadena = new StringBuilder("---TODOS PRODUCTOS---\n");
 		int i = 0;
 		for (Producto producto : listaProductos) {
-			if (producto instanceof Bebida) {
-				cadena.append(
-						(i + 1) + ")" + ((Bebida) producto).getNombre() + "\t" + ((Bebida) producto).cobrar() + "\n");
-			} else if (producto instanceof Carne) {
-				cadena.append(
-						(i + 1) + ")" + ((Carne) producto).getNombre() + "\t" + ((Carne) producto).cobrar() + "\n");
-			} else if (producto instanceof Pescado) {
-				cadena.append(
-						(i + 1) + ")" + ((Pescado) producto).getNombre() + "\t" + ((Pescado) producto).cobrar() + "\n");
-			}
+			cadena.append((i + 1) + ")" + ((Bebida) producto).getNombre() + "\t" + ((Cobrable) producto).cobrar() + "\n");
 			i++;
 		}
 
 		return cadena.toString();
 	}
-	
+
 	/**
 	 * Mostrar solo las bebidas de la lista de productos
+	 * 
 	 * @return las bebidas de la lista
 	 * @throws ListaVaciaException
 	 */
@@ -389,10 +385,11 @@ public class ListaProductos implements Serializable {
 
 		return cadena.toString();
 	}
-	
+
 	/**
 	 * Mostrar solo las carnes de la lista de productos
-	 * @return las carnes de la lista de productos 
+	 * 
+	 * @return las carnes de la lista de productos
 	 * @throws ListaVaciaException
 	 */
 	public String mostrarCarnes() throws ListaVaciaException {
@@ -412,9 +409,10 @@ public class ListaProductos implements Serializable {
 
 		return cadena.toString();
 	}
-	
+
 	/**
 	 * Mostrar solo los pescados de la lista de productos
+	 * 
 	 * @return los pescados
 	 * @throws ListaVaciaException
 	 */
@@ -489,6 +487,5 @@ public class ListaProductos implements Serializable {
 		}
 		return numerodePescados;
 	}
-	
-	
+
 }

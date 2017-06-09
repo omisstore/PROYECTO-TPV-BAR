@@ -248,10 +248,17 @@ public class Tpv implements Serializable {
 		String ticket = imprimirTicket();
 		reducirStocksTui();
 		saveCobro();
-		listaPrincipal.clear();
+		limpiarCuenta();
 		return ticket;
 	}
-
+	/**
+	 * Limpiar la cuenta(Lista principal)
+	 */
+	public void limpiarCuenta(){
+		listaPrincipal.clear();
+	}
+	
+	
 	/**
 	 * Cobrar cuenta en GUI
 	 * 
@@ -271,7 +278,7 @@ public class Tpv implements Serializable {
 
 		if (vuelta >= 0) {
 			saveCobro();
-			listaPrincipal.clear();
+			limpiarCuenta();
 			return vuelta;
 		} else
 			throw new VueltaNoValidaException("El dinero del clente no es suficiente, para cobrar");

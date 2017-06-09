@@ -49,6 +49,7 @@ import javax.swing.ImageIcon;
 
 /**
  * GUI Principal del TPV-BAR
+ * 
  * @author Javier Ponferrada López
  * @version 1.0
  */
@@ -73,6 +74,7 @@ public class Principal extends JFrame {
 	private JScrollPane scrollTablaAnadirPescadoACuenta;
 	private static JFileChooser jFileChooser = new JFileChooser();
 	private static Filtro filtro = new Filtro(".obj", "Objecto");
+
 	/**
 	 * Launch the application.
 	 */
@@ -98,30 +100,32 @@ public class Principal extends JFrame {
 			public void windowClosing(WindowEvent e) {
 				salir();
 			}
+
 			@Override
 			public void windowClosed(WindowEvent e) {
 				salir();
 			}
 		});
-		setIconImage(Toolkit.getDefaultToolkit().getImage("src/img/LogoTpv.png"));//logo del TPV
+		setIconImage(Toolkit.getDefaultToolkit().getImage("src/img/LogoTpv.png"));// logo
+																					// del
+																					// TPV
 		setResizable(false);
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setBounds(100, 100, 684, 616);
 		setTitle("Sin titulo");
 
-		
 		JMenuBar menuBar = new JMenuBar();
 		setJMenuBar(menuBar);
 
-		
 		JMenu mnArchivo = new JMenu("Archivo");
 		menuBar.add(mnArchivo);
 
-		JMenuItem mntmNuevo = new JMenuItem("Nuevo");//Crear un nuevo Tpv
+		JMenuItem mntmNuevo = new JMenuItem("Nuevo");// Crear un nuevo Tpv
 		mntmNuevo.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_N, InputEvent.CTRL_MASK));
 		mntmNuevo.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				if (Fichero.tpv.isModificado()) {//Comprobar si el tpv se ha modificado
+				if (Fichero.tpv.isModificado()) {// Comprobar si el tpv se ha
+													// modificado
 					Object[] opciones = new Object[] { "Si", "No", "Cancelar" };
 					int respuesta = JOptionPane.showOptionDialog(null,
 							"No se ha guardado los cambios,¿Deseas guardar los cambios?", "No has guardado",
@@ -132,12 +136,13 @@ public class Principal extends JFrame {
 						Fichero.tpv = new Tpv();
 						setTitle("Sin titulo");
 						Fichero.tpv.setModificado(false);
+						limpiarCuenta();
 						break;
 					case 1:
-
 						setTitle("Sin titulo");
 						Fichero.tpv = new Tpv();
 						Fichero.tpv.setModificado(false);
+						limpiarCuenta();
 						break;
 					}
 				} else {
@@ -149,7 +154,8 @@ public class Principal extends JFrame {
 		});
 		mnArchivo.add(mntmNuevo);
 
-		JMenuItem mntmAbrir = new JMenuItem("Abrir");//Abrir un tpv existente en un fichero
+		JMenuItem mntmAbrir = new JMenuItem("Abrir");// Abrir un tpv existente
+														// en un fichero
 		mntmAbrir.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_A, InputEvent.CTRL_MASK));
 		mntmAbrir.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
@@ -159,36 +165,31 @@ public class Principal extends JFrame {
 							"No se ha guardado los cambios,¿Deseas guardar los cambios?", "No has guardado",
 							JOptionPane.DEFAULT_OPTION, JOptionPane.WARNING_MESSAGE, null, opciones, opciones[0]);
 					switch (respuesta) {
-					case 0://Se desea guardar los cambios
+					case 0:// Se desea guardar los cambios
 						guardarComoFichero();
-						break;
-					case 1://Se desea abrir el fichero y por lo tanto guardar los cambios
-						try {
-							abrirArchivo();
-						} catch (HeadlessException | ClassNotFoundException | IOException e1) {
-							JOptionPane.showMessageDialog(null, "No se ha podido abrir el Tpv.", "Aceptar",
-									JOptionPane.ERROR_MESSAGE);
-						}
-						break;
-					}
-				} else {
-					try {
 						abrirArchivo();
-					} catch (HeadlessException | ClassNotFoundException | IOException e1) {
-						JOptionPane.showMessageDialog(null, "No se ha podido abrir el tpv.", "Aceptar",
-								JOptionPane.ERROR_MESSAGE);
+						break;
+					case 1:// Se desea abrir el fichero y por lo tanto guardar
+							// los cambios
+						abrirArchivo();
+						break;
 					}
-				}
+				} else
+					abrirArchivo();
+				
 			}
-			
+
 		});
 		mnArchivo.add(mntmAbrir);
 
-		JMenuItem mntmGuardar = new JMenuItem("Guardar");//Guardar el tpv actual.
+		JMenuItem mntmGuardar = new JMenuItem("Guardar");// Guardar el tpv
+															// actual.
 		mntmGuardar.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_G, InputEvent.CTRL_MASK));
 		mntmGuardar.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				if (getTitle() == "Sin titulo") {//Comprueba que si no hay abierto ningun tpv, se guarde el actual
+				if (getTitle() == "Sin titulo") {// Comprueba que si no hay
+													// abierto ningun tpv, se
+													// guarde el actual
 					guardarComoFichero();
 					Fichero.tpv.setModificado(false);
 				} else {
@@ -205,8 +206,16 @@ public class Principal extends JFrame {
 		});
 		mnArchivo.add(mntmGuardar);
 
-		JMenuItem mntmGuardarComo = new JMenuItem("Guardar como...");//Se guarda el tpv en un fichero fichero indicado
-		mntmGuardarComo.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_G, InputEvent.CTRL_MASK | InputEvent.SHIFT_MASK));
+		JMenuItem mntmGuardarComo = new JMenuItem("Guardar como...");// Se
+																		// guarda
+																		// el
+																		// tpv
+																		// en un
+																		// fichero
+																		// fichero
+																		// indicado
+		mntmGuardarComo
+				.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_G, InputEvent.CTRL_MASK | InputEvent.SHIFT_MASK));
 		mntmGuardarComo.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				guardarComoFichero();
@@ -218,7 +227,10 @@ public class Principal extends JFrame {
 		JSeparator separator = new JSeparator();
 		mnArchivo.add(separator);
 
-		JMenuItem mntmSalir = new JMenuItem("Salir");//Salir del programa. Comprobando que no se halla modificado el TPV
+		JMenuItem mntmSalir = new JMenuItem("Salir");// Salir del programa.
+														// Comprobando que no se
+														// halla modificado el
+														// TPV
 		mntmSalir.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_Q, InputEvent.CTRL_MASK | InputEvent.SHIFT_MASK));
 		mntmSalir.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
@@ -252,7 +264,10 @@ public class Principal extends JFrame {
 		tabbedPane.addTab("Principal", null, panelPrincipal, null);
 		panelPrincipal.setLayout(null);
 
-		JButton btnBebida = new JButton("BEBIDAS");//Refresca la tabla de añadir a cuenta de bebidas y solo muestra la de bebidas
+		JButton btnBebida = new JButton("BEBIDAS");// Refresca la tabla de
+													// añadir a cuenta de
+													// bebidas y solo muestra la
+													// de bebidas
 		btnBebida.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				tableAnadirBebidaACuenta.setVisible(true);
@@ -265,9 +280,11 @@ public class Principal extends JFrame {
 			}
 		});
 		btnBebida.setBounds(6, 364, 117, 39);
-		panelPrincipal.add(btnBebida);		
-		
-		JButton btnCarnes = new JButton("CARNES");//Refresca la tabla de añadir a cuenta de carnes y solo muestra la de carnes
+		panelPrincipal.add(btnBebida);
+
+		JButton btnCarnes = new JButton("CARNES");// Refresca la tabla de añadir
+													// a cuenta de carnes y solo
+													// muestra la de carnes
 		btnCarnes.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				tableAnadirCarneACuenta.setVisible(true);
@@ -282,7 +299,11 @@ public class Principal extends JFrame {
 		btnCarnes.setBounds(6, 404, 117, 39);
 		panelPrincipal.add(btnCarnes);
 
-		JButton btnPescados = new JButton("PESCADOS");//Refresca la tabla de añadir a cuenta de pescados y solo muestra la de pescados
+		JButton btnPescados = new JButton("PESCADOS");// Refresca la tabla de
+														// añadir a cuenta de
+														// pescados y solo
+														// muestra la de
+														// pescados
 		btnPescados.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				tableAnadirPescadoACuenta.setVisible(true);
@@ -360,8 +381,9 @@ public class Principal extends JFrame {
 						Fichero.tpv.setModificado(true);
 						refrescarTablaPescadosConf();
 					} else {
-						JOptionPane.showMessageDialog(null, "Selecciona algun produdcto, para poder añadirlo a la cuenta.",
-								"Error", JOptionPane.ERROR_MESSAGE);
+						JOptionPane.showMessageDialog(null,
+								"Selecciona algun produdcto, para poder añadirlo a la cuenta.", "Error",
+								JOptionPane.ERROR_MESSAGE);
 					}
 					refrescarTablaCuenta();
 					tableAnadirCarneACuenta.clearSelection();
@@ -373,14 +395,13 @@ public class Principal extends JFrame {
 				} catch (Exception e3) {
 					JOptionPane.showMessageDialog(null, e3.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
 				}
-				
 
 			}
 		});
 		btnAadir.setBounds(559, 350, 88, 111);
 		panelPrincipal.add(btnAadir);
 
-		JButton btnCobrar = new JButton("COBRAR");//Cobrar la cuenta
+		JButton btnCobrar = new JButton("COBRAR");// Cobrar la cuenta
 		btnCobrar.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				CobrarCuenta cobrarCuenta;
@@ -393,14 +414,14 @@ public class Principal extends JFrame {
 				} catch (ProductoNoEncontradoExcepcion | ListaVaciaException e1) {
 					JOptionPane.showMessageDialog(null, e1.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
 				}
-			
 
 			}
 		});
 		btnCobrar.setBounds(6, 123, 117, 47);
 		panelPrincipal.add(btnCobrar);
 
-		JButton btnComanda = new JButton("COMANDA");//MOstrar la comanda de la cuenta
+		JButton btnComanda = new JButton("COMANDA");// MOstrar la comanda de la
+													// cuenta
 		btnComanda.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				Comanda comanda;
@@ -410,13 +431,16 @@ public class Principal extends JFrame {
 				} catch (Exception e1) {
 					JOptionPane.showMessageDialog(null, e1.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
 				}
-				
+
 			}
 		});
 		btnComanda.setBounds(6, 171, 117, 47);
 		panelPrincipal.add(btnComanda);
 
-		JButton btnBorrarProdCuenta = new JButton("BORRAR");//Borrar de la cuenta un producto seleccionado
+		JButton btnBorrarProdCuenta = new JButton("BORRAR");// Borrar de la
+															// cuenta un
+															// producto
+															// seleccionado
 		btnBorrarProdCuenta.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				try {
@@ -448,7 +472,6 @@ public class Principal extends JFrame {
 		tableAnadirBebidaACuenta.setRowSelectionAllowed(true);
 		tableAnadirBebidaACuenta.setBorder(new LineBorder(new Color(0, 0, 0)));
 		tableAnadirBebidaACuenta.setVisible(true);
-		
 
 		// Tabla para añadir carnes a la cuenta
 		tableAnadirCarneACuenta = new JTable();
@@ -457,14 +480,13 @@ public class Principal extends JFrame {
 		tableAnadirCarneACuenta.setBorder(new LineBorder(new Color(0, 0, 0)));
 		tableAnadirCarneACuenta.setVisible(false);
 
-		
 		// Tabla para añadir pescados a la cuenta
 		tableAnadirPescadoACuenta = new JTable();
 		tableAnadirPescadoACuenta.setBounds(135, 350, 417, 153);
 		tableAnadirPescadoACuenta.setRowSelectionAllowed(true);
 		tableAnadirPescadoACuenta.setBorder(new LineBorder(new Color(0, 0, 0)));
-		tableAnadirPescadoACuenta.setVisible(false);	
-		
+		tableAnadirPescadoACuenta.setVisible(false);
+
 		textFieldCantidad = new JTextField();
 		textFieldCantidad.setBounds(559, 477, 88, 26);
 		panelPrincipal.add(textFieldCantidad);
@@ -474,7 +496,7 @@ public class Principal extends JFrame {
 		lblNewLabel.setBounds(562, 463, 61, 16);
 		panelPrincipal.add(lblNewLabel);
 
-		JLabel lblTotal = new JLabel("TOTAL");//Total de la cuenta
+		JLabel lblTotal = new JLabel("TOTAL");// Total de la cuenta
 		lblTotal.setFont(new Font("Lucida Grande", Font.PLAIN, 16));
 		lblTotal.setBounds(77, 275, 61, 26);
 		panelPrincipal.add(lblTotal);
@@ -484,55 +506,54 @@ public class Principal extends JFrame {
 		labelTotalResultado.setFont(new Font("Lucida Grande", Font.PLAIN, 16));
 		labelTotalResultado.setBounds(41, 302, 88, 26);
 		panelPrincipal.add(labelTotalResultado);
-		
-		//ScrollPane tabla de cuenta
+
+		// ScrollPane tabla de cuenta
 		JScrollPane scrollPaneTablaCuenta = new JScrollPane();
 		scrollPaneTablaCuenta.setBounds(135, 23, 417, 305);
 		panelPrincipal.add(scrollPaneTablaCuenta);
-		
+
 		JLabel lblTitleCuenta = new JLabel("CUENTA");
 		lblTitleCuenta.setBounds(314, 6, 61, 16);
 		panelPrincipal.add(lblTitleCuenta);
-		
+
 		JLabel lblTitleProductos = new JLabel("PRODUCTOS");
 		lblTitleProductos.setBounds(303, 332, 88, 16);
 		panelPrincipal.add(lblTitleProductos);
 		scrollPaneTablaCuenta.setViewportView(tableCuenta);
-		
-		//ScrollPane Tabla añadir Bebida a la cuenta
+
+		// ScrollPane Tabla añadir Bebida a la cuenta
 		scrollTablaAnadirBebidaACuenta = new JScrollPane();
 		scrollTablaAnadirBebidaACuenta.setBounds(135, 350, 417, 153);
 		panelPrincipal.add(scrollTablaAnadirBebidaACuenta);
 		scrollTablaAnadirBebidaACuenta.setViewportView(tableAnadirBebidaACuenta);
-		
-		
-		//ScrollPane Tabla añadir Carne a la cuenta
+
+		// ScrollPane Tabla añadir Carne a la cuenta
 		scrollTablaAnadirCarneACuenta = new JScrollPane();
 		scrollTablaAnadirCarneACuenta.setBounds(135, 350, 417, 153);
 		panelPrincipal.add(scrollTablaAnadirCarneACuenta);
 		scrollTablaAnadirCarneACuenta.setViewportView(tableAnadirCarneACuenta);
-		
-		//ScrollPane Tabla añadir Pescado a la cuenta
+
+		// ScrollPane Tabla añadir Pescado a la cuenta
 		scrollTablaAnadirPescadoACuenta = new JScrollPane();
 		scrollTablaAnadirPescadoACuenta.setBounds(135, 350, 417, 153);
 		panelPrincipal.add(scrollTablaAnadirPescadoACuenta);
 		scrollTablaAnadirPescadoACuenta.setViewportView(tableAnadirPescadoACuenta);
-		
+
 		JButton btnNewButton = new JButton("DecremStock");
 		btnNewButton.setFont(new Font("Lucida Grande", Font.PLAIN, 9));
 		btnNewButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				try {
-					if(Fichero.tpv.getListaPrincipal().isEmpty())
+					if (Fichero.tpv.getListaPrincipal().isEmpty())
 						throw new ListaVaciaException("ERROR: Cuenta vacía");
-					
-					Fichero.tpv.decrementarStockProductoCuenta(tableCuenta.getSelectedRow(),Integer.valueOf(JOptionPane.showInputDialog(null, "Stock a reducir:")));
+
+					Fichero.tpv.decrementarStockProductoCuenta(tableCuenta.getSelectedRow(),
+							Integer.valueOf(JOptionPane.showInputDialog(null, "Stock a reducir:")));
 					Fichero.tpv.refrescarPrecioProductoCuenta();
 					Fichero.tpv.setModificado(true);
 					refrescarTablaCuenta();
 					refrescarTotalCuenta();
-					
-					
+
 				} catch (Exception e1) {
 					JOptionPane.showMessageDialog(null, e1.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
 				}
@@ -540,12 +561,12 @@ public class Principal extends JFrame {
 		});
 		btnNewButton.setBounds(559, 109, 74, 39);
 		panelPrincipal.add(btnNewButton);
-		
+
 		JLabel label = new JLabel("New label");
 		label.setIcon(new ImageIcon(Principal.class.getResource("/img/LogoTpv.png")));
 		label.setBounds(6, 19, 107, 92);
 		panelPrincipal.add(label);
-		
+
 		// ----------CONFIGURACIÓN--------------
 		JPanel panelConfig = new JPanel();
 		tabbedPane.addTab("Configuración", null, panelConfig, null);
@@ -567,47 +588,43 @@ public class Principal extends JFrame {
 		tableListaBebidasConf.setRowSelectionAllowed(true);
 		tableListaBebidasConf.setBorder(new LineBorder(new Color(0, 0, 0)));
 		tableListaBebidasConf.setBounds(129, 33, 399, 445);
-//		panelConfig.add(tableListaBebidasConf);
-		
-		
+		// panelConfig.add(tableListaBebidasConf);
+
 		// Tabla configracion de Carnes.
 		tableListaCarnesConf = new JTable();
 		tableListaCarnesConf.setRowSelectionAllowed(true);
 		tableListaCarnesConf.setBorder(new LineBorder(new Color(0, 0, 0)));
 		tableListaCarnesConf.setBounds(129, 33, 399, 445);
-		//panelConfig.add(tableListaCarnesConf);
-		
+		// panelConfig.add(tableListaCarnesConf);
 
-		
 		// Tabla configracion de Pescados.
 		tableListaPescadosConf = new JTable();
 		tableListaPescadosConf.setRowSelectionAllowed(true);
 		tableListaPescadosConf.setBorder(new LineBorder(new Color(0, 0, 0)));
 		tableListaPescadosConf.setBounds(129, 33, 399, 445);
-//		panelConfig.add(tableListaPescadosConf);
-		
-		
-		//Scroll panel de la tabla de configuracion de bebidas
+		// panelConfig.add(tableListaPescadosConf);
+
+		// Scroll panel de la tabla de configuracion de bebidas
 		scrollPaneTablaBebidaConf = new JScrollPane();
 		scrollPaneTablaBebidaConf.setBounds(129, 33, 399, 445);
 		panelConfig.add(scrollPaneTablaBebidaConf);
 		scrollPaneTablaBebidaConf.setViewportView(tableListaBebidasConf);
-		
-		
-		//Scroll panel de la tabla de configuracion de bebidas
+
+		// Scroll panel de la tabla de configuracion de bebidas
 		scrollPaneTablaCarneConf = new JScrollPane();
 		scrollPaneTablaCarneConf.setBounds(129, 33, 399, 445);
 		panelConfig.add(scrollPaneTablaCarneConf);
 		scrollPaneTablaCarneConf.setViewportView(tableListaCarnesConf);
-		
-		//Scroll panel de la tabla de configuracion de bebidas
+
+		// Scroll panel de la tabla de configuracion de bebidas
 		scrollPaneTablaPescadoConf = new JScrollPane();
 		scrollPaneTablaPescadoConf.setBounds(129, 33, 399, 445);
 		panelConfig.add(scrollPaneTablaPescadoConf);
 		scrollPaneTablaPescadoConf.setViewportView(tableListaPescadosConf);
-		
-		
-		JButton btnBebidasConf = new JButton("BEBIDAS");//Refrescar la tabla de bebidas y muestra solo la de bebidas
+
+		JButton btnBebidasConf = new JButton("BEBIDAS");// Refrescar la tabla de
+														// bebidas y muestra
+														// solo la de bebidas
 		btnBebidasConf.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				tableListaBebidasConf.setVisible(true);
@@ -623,7 +640,9 @@ public class Principal extends JFrame {
 		btnBebidasConf.setBounds(6, 53, 117, 41);
 		panelConfig.add(btnBebidasConf);
 
-		JButton btnCarnesConf = new JButton("CARNES");//Refrescar la tabla de carnes y muestra solo la de carnes
+		JButton btnCarnesConf = new JButton("CARNES");// Refrescar la tabla de
+														// carnes y muestra solo
+														// la de carnes
 		btnCarnesConf.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				tableListaBebidasConf.setVisible(false);
@@ -638,7 +657,10 @@ public class Principal extends JFrame {
 		btnCarnesConf.setBounds(6, 106, 117, 41);
 		panelConfig.add(btnCarnesConf);
 
-		JButton btnPescadosConf = new JButton("PESCADOS");//Refrescar la tabla de pescados y muestra solo la de pescados
+		JButton btnPescadosConf = new JButton("PESCADOS");// Refrescar la tabla
+															// de pescados y
+															// muestra solo la
+															// de pescados
 		btnPescadosConf.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				tableListaBebidasConf.setVisible(false);
@@ -648,13 +670,15 @@ public class Principal extends JFrame {
 				scrollPaneTablaBebidaConf.setVisible(false);
 				scrollPaneTablaCarneConf.setVisible(false);
 				scrollPaneTablaPescadoConf.setVisible(true);
-				
+
 			}
 		});
 		btnPescadosConf.setBounds(6, 159, 117, 41);
 		panelConfig.add(btnPescadosConf);
 
-		JButton btnModificar = new JButton("MODIFICAR");//Modificar el producto seleccionado de la tabla de productos
+		JButton btnModificar = new JButton("MODIFICAR");// Modificar el producto
+														// seleccionado de la
+														// tabla de productos
 		btnModificar.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				try {
@@ -759,7 +783,10 @@ public class Principal extends JFrame {
 		btnBorrarConf.setBounds(530, 98, 117, 35);
 		panelConfig.add(btnBorrarConf);
 
-		JButton btnAadirBebida = new JButton("AÑADIR BEBIDA");//Boton que añade una bebida a la lista de productos
+		JButton btnAadirBebida = new JButton("AÑADIR BEBIDA");// Boton que añade
+																// una bebida a
+																// la lista de
+																// productos
 		btnAadirBebida.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				AnadirBebida anadirBebida = new AnadirBebida();
@@ -771,7 +798,10 @@ public class Principal extends JFrame {
 		btnAadirBebida.setBounds(530, 319, 117, 41);
 		panelConfig.add(btnAadirBebida);
 
-		JButton btnAadirCarne = new JButton("AÑADIR CARNE");//Boton que añade una carne a la lista de productos
+		JButton btnAadirCarne = new JButton("AÑADIR CARNE");// Boton que añade
+															// una carne a la
+															// lista de
+															// productos
 		btnAadirCarne.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				AnadirCarne anadirCarne = new AnadirCarne();
@@ -783,7 +813,11 @@ public class Principal extends JFrame {
 		btnAadirCarne.setBounds(530, 362, 117, 41);
 		panelConfig.add(btnAadirCarne);
 
-		JButton btnAadirPescado = new JButton("AÑADIR PESCADO");//Boton que añade un pescado a la lista de productos
+		JButton btnAadirPescado = new JButton("AÑADIR PESCADO");// Boton que
+																// añade un
+																// pescado a la
+																// lista de
+																// productos
 		btnAadirPescado.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				AnadirPescado anadirPescado = new AnadirPescado();
@@ -794,25 +828,23 @@ public class Principal extends JFrame {
 		btnAadirPescado.setFont(new Font("Lucida Grande", Font.PLAIN, 11));
 		btnAadirPescado.setBounds(530, 406, 117, 41);
 		panelConfig.add(btnAadirPescado);
-		
+
 		JLabel lblProductos = new JLabel("PRODUCTOS");
 		lblProductos.setFont(new Font("Lucida Grande", Font.PLAIN, 16));
 		lblProductos.setBounds(279, 17, 117, 16);
 		panelConfig.add(lblProductos);
-		
+
 		JButton btnTickets = new JButton("TICKETS");
 		btnTickets.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				MostrarTickets mostrarTicket =  new MostrarTickets();
+				MostrarTickets mostrarTicket = new MostrarTickets();
 				mostrarTicket.setVisible(true);
 			}
 		});
 		btnTickets.setBounds(6, 324, 117, 41);
 		panelConfig.add(btnTickets);
-		
 
 	}
-
 
 	/**
 	 * Refrescar la tabla de configuracion de bebidas
@@ -820,7 +852,7 @@ public class Principal extends JFrame {
 	private void refrescarTablaBebidasConf() {
 		tableListaBebidasConf.setModel(new DefaultTableModel(Fichero.tpv.pasoAMatrizBebidaListaProductos(),
 				new String[] { "ID", "Nombre", "Descripcion", "Stock", "Precio", "Iva", "Envase", "Tipo" }));
-		
+
 	}
 
 	/**
@@ -865,7 +897,8 @@ public class Principal extends JFrame {
 
 	/**
 	 * Refrescar la tabla de Añadir a la cuenta, pescados
-	 * @throws ProductoNoEncontradoExcepcion 
+	 * 
+	 * @throws ProductoNoEncontradoExcepcion
 	 */
 	private void refrescarTablaCuenta() throws ProductoNoEncontradoExcepcion {
 		Fichero.tpv.comprobarStockCuenta();
@@ -885,31 +918,52 @@ public class Principal extends JFrame {
 			labelTotalResultado.setText("0€");
 		}
 	}
-	
+
 	/**
 	 * Limpiar el campo de cantidad a añadir a la cuenta
 	 */
 	private void limpiarCantidad() {
 		textFieldCantidad.setText("");
 	}
-	
+
 	/**
 	 * Abrir archivo seleccionado(FileChooser)
+	 * 
 	 * @throws HeadlessException
 	 * @throws IOException
 	 * @throws ClassNotFoundException
+	 * @throws ProductoNoEncontradoExcepcion
 	 */
-	private void abrirArchivo() throws HeadlessException, IOException, ClassNotFoundException {
-		jFileChooser.setAcceptAllFileFilterUsed(false);
-		jFileChooser.addChoosableFileFilter(filtro);
-		if (jFileChooser.showDialog(jFileChooser, "Abrir") == JFileChooser.APPROVE_OPTION) {
-			Fichero.abrir(jFileChooser.getSelectedFile());
-			setTitle(jFileChooser.getSelectedFile().getName());
-			Fichero.tpv.setModificado(false);
+	private void abrirArchivo() {
+		try {
+			jFileChooser.setAcceptAllFileFilterUsed(false);
+			jFileChooser.addChoosableFileFilter(filtro);
+			if (jFileChooser.showDialog(jFileChooser, "Abrir") == JFileChooser.APPROVE_OPTION) {
+				Fichero.abrir(jFileChooser.getSelectedFile());
+				setTitle(jFileChooser.getSelectedFile().getName());
+				Fichero.tpv.setModificado(false);
+				limpiarCuenta();
 
+			}
+		} catch (HeadlessException | ClassNotFoundException | IOException e1) {
+			JOptionPane.showMessageDialog(null, "No se ha podido abrir el Tpv.", "Aceptar", JOptionPane.ERROR_MESSAGE);
 		}
+
 	}
-	
+
+	/**
+	 * Limpiar cuenta(Lista principal)
+	 */
+	private void limpiarCuenta() {
+		Fichero.tpv.limpiarCuenta();
+		try {
+			refrescarTablaCuenta();
+		} catch (ProductoNoEncontradoExcepcion e) {
+			e.printStackTrace();
+		}
+
+	}
+
 	/**
 	 * Guardar el tpv en la ruta especificada por el filechooser.
 	 */
@@ -922,7 +976,7 @@ public class Principal extends JFrame {
 
 			if (jFileChooser.getSelectedFile().exists()) {
 				Object[] opciones = new Object[] { "Si", "No" };
-				int respuesta = JOptionPane.showOptionDialog(null, "¿Deseas sobreescribir los cambios?","Ya existe.",
+				int respuesta = JOptionPane.showOptionDialog(null, "¿Deseas sobreescribir los cambios?", "Ya existe.",
 						JOptionPane.DEFAULT_OPTION, JOptionPane.WARNING_MESSAGE, null, opciones, opciones[0]);
 
 				switch (respuesta) {
@@ -956,21 +1010,23 @@ public class Principal extends JFrame {
 		}
 		Fichero.tpv.setModificado(false);
 	}
+
 	/**
 	 * Salir del programa
 	 */
 	private void salir() {
-		if (Fichero.tpv.isModificado()) {//Comprueba que se ha mododificado el tpv
+		if (Fichero.tpv.isModificado()) {// Comprueba que se ha mododificado el
+											// tpv
 			Object[] opciones = new Object[] { "Si", "No", "Cancelar" };
 			int respuesta = JOptionPane.showOptionDialog(null,
 					"No se ha guardado los cambios,¿Deseas guardar los cambios?", "No has guardado",
 					JOptionPane.DEFAULT_OPTION, JOptionPane.WARNING_MESSAGE, null, opciones, opciones[0]);
 			switch (respuesta) {
-			case 0://Se desea que se guarde los cambios y se salga del programa
+			case 0:// Se desea que se guarde los cambios y se salga del programa
 				guardarComoFichero();
 				System.exit(0);
 				break;
-			case 1://Se desea salir del programa sin guardar los cambios
+			case 1:// Se desea salir del programa sin guardar los cambios
 				System.exit(0);
 				break;
 			default:

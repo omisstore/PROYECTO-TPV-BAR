@@ -28,7 +28,7 @@ public class Bebida extends Producto implements Cobrable,Serializable{
 		super(nombre, descripcion, stock, precio, iva);
 		setEnvase(envase);
 		setTipo(tipo);
-		setTamanio(envase.tamanio());
+//		setTamanio(envase.tamanio());
 	}
 	
 	public Bebida(int identificador,String nombre,String descripcion, int stock, double precio, Iva iva,Envase envase,TipoBebida tipo)
@@ -36,7 +36,7 @@ public class Bebida extends Producto implements Cobrable,Serializable{
 		super(identificador,nombre,descripcion, stock, precio, iva);
 		setEnvase(envase);
 		setTipo(tipo);
-		setTamanio(envase.tamanio());
+//		setTamanio(envase.tamanio());
 	}
 	
 	
@@ -44,16 +44,16 @@ public class Bebida extends Producto implements Cobrable,Serializable{
 	 * @return tamanio de la bebida
 	 * */
 	public String getTamanio() {
-		return tamanio;
+		return envase.tamanio();
 	}
 
-	/**
-	 * Asigna un tamanio a la botella
-	 * @param tamanio, a asignar
-	 * */
-	public void setTamanio(String tamanio) {
-		this.tamanio = tamanio;
-	}
+//	/**
+//	 * Asigna un tamanio a la botella
+//	 * @param tamanio, a asignar
+//	 * */
+//	public void setTamanio(String tamanio) {
+//		this.tamanio = tamanio;
+//	}
 
 
 	/**
